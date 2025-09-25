@@ -1,6 +1,4 @@
-from sage.all import *                      # Import (nearly) everything from SageMath into the namespace.
-                                            # Not strictly needed for this minimal class, but handy if you later
-                                            # use Sage rings, symbols, or combinatorics utilities.
+from sage.all import *                      
 
 def normalize_alpha(alpha, ell):            # Helper: validate and canonicalize a single multi-index α of length ell.
     a = tuple(int(v) for v in alpha)        # Coerce entries to ints and freeze as a tuple (hashable, comparable).
@@ -17,7 +15,7 @@ def normalize_key(alphas, ell):             # Helper: turn a multiset/list of α
     clean = tuple(normalize_alpha(a, ell) for a in alphas)  # Validate each α and collect them into a tuple.
     return tuple(sorted(clean))             # Sort lexicographically -> canonical order (so keys are unique).
 
-class PPSElement:                           # Minimal "Polarized Power-Sum" element (plain Python, not Sage Element).
+class PSElement:                           # Minimal "Power-Sum" element (plain Python, not Sage Element).
     def __init__(self, ell, data=None):     # Construct with number of alphabets ℓ and an optional dict of terms.
         self.ell = ell                      # Store ℓ (used to validate/compose keys later).
         self.data = {}                      # Internal sparse representation: { key(tuple of α’s) -> coefficient }.
@@ -54,17 +52,17 @@ class PPSElement:                           # Minimal "Polarized Power-Sum" elem
                 parts.append(f"{c}*{mon}")  # otherwise include the numeric coefficient.
         return " + ".join(parts)            # Join all terms with " + " and return.
 
-    def __add__(self, other):               # Addition of two PPSElements.
+    def __add__(self, other):               # Addition of two PSElements.
         assert self.ell == other.ell        # Ensure both live in the same number of alphabets.
         out = dict(self.data)               # Start with a copy of the left operand’s terms.
         for k, c in other.data.items():     # Add in the right operand’s terms,
             out[k] = out.get(k, 0) + c      # summing coefficients when keys match.
             if out[k] == 0:                 # Drop zeros that arise (clean sparsity).
                 del out[k]
-        return PPSElement(self.ell, out)    # Return a new element with the merged mapping.
+        return PSElement(self.ell, out)    # Return a new element with the merged mapping.
 
     def __neg__(self):                      # Unary minus.
-        return PPSElement(self.ell, {k: -c for k, c in self.data.items()})  # Flip all coefficients.
+        return PSElement(self.ell, {k: -c for k, c in self.data.items()})  # Flip all coefficients.
 
     def __sub__(self, other):               # Subtraction defined via addition and negation.
         return self + (-other)
@@ -78,9 +76,9 @@ class PPSElement:                           # Minimal "Polarized Power-Sum" elem
                 out[k] = out.get(k, 0) + c1 * c2      # accumulate the product coefficient.
                 if out[k] == 0:            # If it cancels to zero, remove it to keep the mapping sparse.
                     del out[k]
-        return PPSElement(self.ell, out)    # Return the product element.
+        return PSElement(self.ell, out)    # Return the product element.
 
-a = PPSElement.gen(2,(1,0))                 # Make the generator p_(1,0) for ℓ=2 (two alphabets).
-b = PPSElement.gen(2,(0,2))                 # Make the generator p_(0,2) for ℓ=2.
+a = PSElement.gen(2,(1,0))                 # Make the generator p_(1,0) for ℓ=2 (two alphabets).
+b = PSElement.gen(2,(0,2))                 # Make the generator p_(0,2) for ℓ=2.
 print(a*b)                                  # Compute and print their product: p(1, 0)*p(0, 2).
 print((a+b)*(a-b))                          # Compute (a+b)(a-b) = a^2 - b^2 and print.
