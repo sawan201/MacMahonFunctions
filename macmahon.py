@@ -78,7 +78,48 @@ class PSElement:                           # Minimal "Power-Sum" element (plain 
                     del out[k]
         return PSElement(self.ell, out)    # Return the product element.
 
-a = PSElement.gen(2,(1,0))                 # Make the generator p_(1,0) for ℓ=2 (two alphabets).
-b = PSElement.gen(2,(0,2))                 # Make the generator p_(0,2) for ℓ=2.
-print(a*b)                                  # Compute and print their product: p(1, 0)*p(0, 2).
-print((a+b)*(a-b))                          # Compute (a+b)(a-b) = a^2 - b^2 and print.
+def power_series_basis(ell, allowed_alphas, max_deg, *, as_elements=False):
+    """
+    Monomial basis for the formal power-series algebra in generators p_α,
+    truncated to total degree ≤ max_deg.
+
+    Parameters
+    ----------
+    ell : int
+        Number of alphabets (length of each α).
+    allowed_alphas : iterable of tuples
+        Finite set of α’s you permit as generators (each α ∈ ℕ^ell \ {0}).
+        Example for ℓ=2: [(1,0),(0,1),(1,1)].
+    max_deg : int
+        Truncation degree. Includes the constant 1 at degree 0.
+    as_elements : bool, keyword-only (default: False)
+        If True, return a list of PSElement’s (coeff 1) for each basis monomial.
+        If False, return the canonical monomial keys (tuples of α’s).
+
+    Returns
+    -------
+    list
+        If as_elements=False: list of keys, each a tuple (α1, α2, ... , αd) with d ≤ max_deg.
+        If as_elements=True: list of PSElement(ell, {key:1}) in the same order.
+    """
+    if max_deg < 0:
+        return []
+
+    # Deduplicate & validate the allowed generators
+    pool = sorted({normalize_alpha(a, ell) for a in allowed_alphas})
+
+    basis_keys = []
+
+    # Degree 0: the constant 1 (empty key)
+    basis_keys.append(())
+
+    # Degrees 1..max_deg: multisets of generators
+    for d in range(1, max_deg + 1):
+        for combo in combinations_with_replacement(pool, d):
+            key = normalize_key(combo, ell)   # canonical key for the monomial
+            basis_keys.append(key)
+
+    if as_elements:
+        return [PSElement(ell, {k: 1}) for k in basis_keys]
+    return basis_keys
+
