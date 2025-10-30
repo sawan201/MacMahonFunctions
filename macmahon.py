@@ -1,125 +1,141 @@
-from sage.all import *                      
 
-def normalize_alpha(alpha, ell):            # Helper: validate and canonicalize a single multi-index α of length ell.
-    a = tuple(int(v) for v in alpha)        # Coerce entries to ints and freeze as a tuple (hashable, comparable).
-    if len(a) != ell:                        # Check the length matches the number of alphabets ℓ.
-        raise ValueError(f"alpha {alpha} has length {len(a)} != ell={ell}")  # Fail fast if wrong length.
-    if any(v < 0 for v in a):               # Disallow negative exponents.
-        raise ValueError(f"alpha {alpha} has a negative entry")              # Explain the issue.
-    if all(v == 0 for v in a):              # Disallow the all-zero vector (not a valid part).
-        raise ValueError("alpha must not be all zeros")
-    return a                                # Return the validated α as a tuple.
+from sage.all import *
 
-def normalize_key(alphas, ell):             # Helper: turn a multiset/list of α’s into a canonical monomial key.
-    # alphas is an iterable of α’s (each a tuple of length ell)
-    clean = tuple(normalize_alpha(a, ell) for a in alphas)  # Validate each α and collect them into a tuple.
-    return tuple(sorted(clean))             # Sort lexicographically -> canonical order (so keys are unique).
-
-class PSElement:                           # Minimal "Power-Sum" element (plain Python, not Sage Element).
-    def __init__(self, ell, data=None):     # Construct with number of alphabets ℓ and an optional dict of terms.
-        self.ell = ell                      # Store ℓ (used to validate/compose keys later).
-        self.data = {}                      # Internal sparse representation: { key(tuple of α’s) -> coefficient }.
-        if data:                            # If an initial mapping is provided,
-            for k, c in data.items():       # iterate over (key, coefficient) pairs,
-                if c != 0:                  # keep only nonzero coefficients (sparse).
-                    self.data[k] = c
-
-    @classmethod
-    def one(cls, ell):                      # Construct the multiplicative identity 1 (empty product).
-        return cls(ell, {(): 1})            # Empty key () encodes the monomial "1" with coefficient 1.
-
-    @classmethod
-    def zero(cls, ell):                     # Construct the additive identity 0.
-        return cls(ell, {})                 # No terms -> the zero element.
-
-    @classmethod
-    def gen(cls, ell, alpha):               # Construct a single generator p_α.
-        k = normalize_key([alpha], ell)     # Canonical key for the singleton multiset {α}.
-        return cls(ell, {k: 1})             # Element with exactly that generator and coefficient 1.
-
-    def __repr__(self):                     # Human-readable string for printing in the REPL / logs.
-        if not self.data:                   # If there are no terms,
-            return "0"                      # print "0".
-        parts = []                          # Otherwise, build pieces for each term to join with " + ".
-        for key, c in self.data.items():    # For each monomial key and its coefficient,
-            if key == ():                   # if the key is empty,
-                mon = "1"                   # the monomial is "1".
-            else:                           # otherwise,
-                mon = "*".join(f"p{a}" for a in key)  # render as p(α1)*p(α2)*... in order.
-            if c == 1 and key != ():        # If coefficient is 1 and not the constant term,
-                parts.append(mon)           # omit the leading "1*" for cleanliness.
-            else:
-                parts.append(f"{c}*{mon}")  # otherwise include the numeric coefficient.
-        return " + ".join(parts)            # Join all terms with " + " and return.
-
-    def __add__(self, other):               # Addition of two PSElements.
-        assert self.ell == other.ell        # Ensure both live in the same number of alphabets.
-        out = dict(self.data)               # Start with a copy of the left operand’s terms.
-        for k, c in other.data.items():     # Add in the right operand’s terms,
-            out[k] = out.get(k, 0) + c      # summing coefficients when keys match.
-            if out[k] == 0:                 # Drop zeros that arise (clean sparsity).
-                del out[k]
-        return PSElement(self.ell, out)    # Return a new element with the merged mapping.
-
-    def __neg__(self):                      # Unary minus.
-        return PSElement(self.ell, {k: -c for k, c in self.data.items()})  # Flip all coefficients.
-
-    def __sub__(self, other):               # Subtraction defined via addition and negation.
-        return self + (-other)
-
-    def __mul__(self, other):               # Multiplication of two PPSElements.
-        assert self.ell == other.ell        # Must have the same ℓ.
-        out = {}                            # Accumulate product terms here.
-        for k1, c1 in self.data.items():    # For each term c1 * p^{k1} in the left,
-            for k2, c2 in other.data.items():  # and each term c2 * p^{k2} in the right,
-                k = normalize_key(k1 + k2, self.ell)  # concatenate the α-multisets and re-sort (canonical product key).
-                out[k] = out.get(k, 0) + c1 * c2      # accumulate the product coefficient.
-                if out[k] == 0:            # If it cancels to zero, remove it to keep the mapping sparse.
-                    del out[k]
-        return PSElement(self.ell, out)    # Return the product element.
-
-def power_series_basis(ell, allowed_alphas, max_deg, *, as_elements=False):
+class MacMahonAlgebra:
     """
-    Monomial basis for the formal power-series algebra in generators p_α,
-    truncated to total degree ≤ max_deg.
+    A minimal MacMahon algebra with k alphabets, each labeled by a chosen basis name.
 
     Parameters
     ----------
-    ell : int
-        Number of alphabets (length of each α).
-    allowed_alphas : iterable of tuples
-        Finite set of α’s you permit as generators (each α ∈ ℕ^ell \ {0}).
-        Example for ℓ=2: [(1,0),(0,1),(1,1)].
-    max_deg : int
-        Truncation degree. Includes the constant 1 at degree 0.
-    as_elements : bool, keyword-only (default: False)
-        If True, return a list of PSElement’s (coeff 1) for each basis monomial.
-        If False, return the canonical monomial keys (tuples of α’s).
-
-    Returns
-    -------
-    list
-        If as_elements=False: list of keys, each a tuple (α1, α2, ... , αd) with d ≤ max_deg.
-        If as_elements=True: list of PSElement(ell, {key:1}) in the same order.
+    Sym : SymmetricFunctions(R) instance (only used to extract the base ring)
+    k   : positive int, number of alphabets
+    basis : str or sequence of str; 
     """
-    if max_deg < 0:
-        return []
+    def __init__(self, Sym, k=2, basis='powersum'):
+        if not isinstance(k, int) or k <= 0:
+            raise ValueError("k must be a positive integer")
+        self._Sym = Sym
+        self._k = k
 
-    # Deduplicate & validate the allowed generators
-    pool = sorted({normalize_alpha(a, ell) for a in allowed_alphas})
+        if isinstance(basis, (list, tuple)):
+            if len(basis) != k:
+                raise ValueError("if basis is a list/tuple it must have length k")
+            self._bases = list(basis)
+        else:
+            self._bases = [str(basis)] * k
 
-    basis_keys = []
+        self._prefix = f"Mac{k}"
 
-    # Degree 0: the constant 1 (empty key)
-    basis_keys.append(())
+    def base_ring(self):
+        return self._Sym.base_ring()
 
-    # Degrees 1..max_deg: multisets of generators
-    for d in range(1, max_deg + 1):
-        for combo in combinations_with_replacement(pool, d):
-            key = normalize_key(combo, ell)   # canonical key for the monomial
-            basis_keys.append(key)
+    def k(self):
+        return self._k
 
-    if as_elements:
-        return [PSElement(ell, {k: 1}) for k in basis_keys]
-    return basis_keys
+    def bases(self):
+        return tuple(self._bases)
 
+    def monomial(self, tuple_of_parts):
+
+        key = self._canonical_key(tuple_of_parts)
+        return MacMahonElement(self, {key: self.base_ring().one()})
+
+    def _from_dict(self, d):
+
+        new_d = {}
+        R = self.base_ring()
+        for key, c in d.items():
+            ckey = self._canonical_key(key)
+            coeff = R(c)
+            if coeff != R.zero():
+                new_d[ckey] = new_d.get(ckey, R.zero()) + coeff
+        return MacMahonElement(self, new_d)
+
+    def _canonical_key(self, tuple_of_parts):
+        """
+        Validate and canonicalize a k-tuple of partitions to a tuple of Partition objects.
+        """
+        if not isinstance(tuple_of_parts, (list, tuple)) or len(tuple_of_parts) != self._k:
+            raise ValueError(f"key must be a tuple/list of length k={self._k}")
+        parts = []
+        for p in tuple_of_parts:
+            parts.append(Partition(list(p)))  # Partition validates nonnegative, weakly decreasing etc.
+        return tuple(parts)
+
+
+class MacMahonElement:
+    """
+    Minimal element for the MacMahon algebra.
+
+    Internal representation:
+        _coeffs: dict { (Partition, ..., Partition) : coeff in base ring }
+    """
+    def __init__(self, parent, d=None):
+        self._parent = parent
+        self._coeffs = {}
+        if d:
+            R = self.parent().base_ring()
+            for key, c in d.items():
+                ckey = self.parent()._canonical_key(key)
+                coeff = R(c)
+                if coeff != R.zero():
+                    self._coeffs[ckey] = self._coeffs.get(ckey, R.zero()) + coeff
+
+    def parent(self):
+        return self._parent
+
+    # ----- arithmetic: +, -, *  -----
+
+    def __add__(self, other):
+        if not isinstance(other, MacMahonElement) or other.parent() is not self.parent():
+            raise TypeError("addition requires elements from the same MacMahonAlgebra parent")
+        R = self.parent().base_ring()
+        res = dict(self._coeffs)
+        for k, c in other._coeffs.items():
+            newc = res.get(k, R.zero()) + c
+            if newc != R.zero():
+                res[k] = newc
+            elif k in res:
+                del res[k]
+        return MacMahonElement(self.parent(), res)
+
+    __radd__ = __add__
+
+    def __neg__(self):
+        R = self.parent().base_ring()
+        return MacMahonElement(self.parent(), {k: -c for k, c in self._coeffs.items()})
+
+    def __sub__(self, other):
+        return self + (-other)
+
+    def __mul__(self, other):
+
+        R = self.parent().base_ring()
+        try:
+            s = R(other)
+        except Exception as e:
+            raise TypeError("only scalar multiplication by elements of the base ring is supported") from e
+        if s == R.zero():
+            return MacMahonElement(self.parent(), {})
+        if s == R.one():
+            return MacMahonElement(self.parent(), dict(self._coeffs))
+        return MacMahonElement(self.parent(), {k: s * c for k, c in self._coeffs.items()})
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+
+
+    def expand(self, *args, **kwargs):
+        raise NotImplementedError("expand is not implemented yet")
+
+
+
+    def __repr__(self):
+        if not self._coeffs:
+            return "0"
+        terms = []
+        # deterministic order by key
+        for k in sorted(self._coeffs.keys()):
+            terms.append(f"{self._coeffs[k]}*M{list(k)}")
+        return " + ".join(terms)
