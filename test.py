@@ -5,7 +5,7 @@ from MacMahon import MacMahonSymmetricFunctions
 def _make_P():
     """
     Helper to construct the MacMahon powersum realization.
-    Adjust here if you later add a more official constructor.
+    
     """
     MSym = MacMahonSymmetricFunctions(QQ)
     # Directly construct the Powersum realization
