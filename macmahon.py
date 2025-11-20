@@ -14,7 +14,7 @@ class MacMahonSymBasis_abstract(CombinatorialFreeModule, BindableClass):
 
     def __init__(self, alg, graded=True):
 
-        # add code once we figure out how to sort
+        
         def sorting_key(vector):
             vec = tuple(vector)
             total = sum(vec)
@@ -32,7 +32,7 @@ class MacMahonSymBasis_abstract(CombinatorialFreeModule, BindableClass):
        
     def _repr_term(self, vp):
 
-        return self._prefix + self.options._dispatch(self, '_repr_', 'objects', vp)
+        return "{}{}".format(self._prefix, vp)
     
     
 class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
