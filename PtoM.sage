@@ -10,7 +10,9 @@ def PtoM(Mu,La):
     for k in cartesian_product_iterator( [list(range(m)) for i in range(ell)] ):
         vsum = {i:vector(r*[0]) for i in range(m)}
         for j in range(ell):
-            vsum[k[j]] += La[j]
-        if all(vsum[i] == Mu[i] for i in range(m)):
+            vsum[k[j]] += vector(La[j])
+        if all(vsum[i] == vector(Mu[i]) for i in range(m)):
             co += 1
     return co
+
+## P[La] == sum( PtoM(Mu,La) * M[Mu] for Mu in VectorPartitions(sum(La)) )
