@@ -147,58 +147,49 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
         def product_on_basis(self, x, y):
             
 
-            
-
             parts_x = self._parts_from_vector_partition(x)
             parts_y = self._parts_from_vector_partition(y)
 
             Lx = len(parts_x)
             Ly = len(parts_y)
 
-            # trivial cases
             if Lx == 0:
-                # x is the unit: 1 * M[y] = M[y]
-                return {y: self.base_ring().one()}
+                return {y : self.base_ring().one()}
             if Ly == 0:
-                # y is the unit: M[x] * 1 = M[x]
-                return {x: self.base_ring().one()}
+                return {x : self.base_ring().one()}
 
             result = defaultdict(self.base_ring().zero)
 
-            # We encode which parts of y have been used in a bitmask.
-            # parts_acc is a list of vector parts (tuples) we have built so far.
-            def rec(ix, used_mask, parts_acc):
+            def rec(ix, used_mask, acc):
                 if ix == Lx:
-                    # all x parts processed; add in all unused y parts as they are
-                    full_parts = list(parts_acc)
+                    full = list(acc)
                     for j in range(Ly):
                         if not (used_mask & (1 << j)):
-                            full_parts.append(parts_y[j])
-
-                    key = self._make_key(full_parts)
+                            full.append(parts_y[j])
+                    key = self._make_key(full)
                     result[key] += self.base_ring().one()
                     return
 
-                # option 1: leave parts_x[ix] unmatched
                 v = parts_x[ix]
-                parts_acc.append(v)
-                rec(ix + 1, used_mask, parts_acc)
-                parts_acc.pop()
 
-                # option 2: match parts_x[ix] with any currently unused part of y
-                vx = parts_x[ix]
+                # unmatched
+                acc.append(v)
+                rec(ix + 1, used_mask, acc)
+                acc.pop()
+
+                # matched
                 for j in range(Ly):
                     if not (used_mask & (1 << j)):
                         vy = parts_y[j]
-                        # coordinatewise sum in N^k
-                        vsum = tuple(a + b for a, b in zip(vx, vy))
-                        parts_acc.append(vsum)
-                        rec(ix + 1, used_mask | (1 << j), parts_acc)
-                        parts_acc.pop()
+                        vs = tuple(a + b for a,b in zip(v, vy))
+                        acc.append(vs)
+                        rec(ix + 1, used_mask | (1 << j), acc)
+                        acc.pop()
 
             rec(0, 0, [])
 
-            return dict(result)
+            coeffs = dict(result)          
+            return self._from_dict(coeffs) 
 
 
         
