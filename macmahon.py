@@ -1,3 +1,4 @@
+from sage.all import vector, cartesian_product_iterator
 from sage.misc.bindable_class import BindableClass
 from sage.combinat import vector_partition
 from sage.combinat.vector_partition import VectorPartition, VectorPartitions
@@ -8,7 +9,6 @@ from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from itertools import product
-
 from itertools import product as cartesian_product
 from functools import reduce
 from operator import mul
@@ -54,14 +54,25 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
     def _repr_(self):
         return "MacMahon symmetric functions over {}".format(self.base_ring())
     
-    def a_realization(self):
-        return self.M()
-    _shorthands = ('M', 'P') #more to be added later
+
 
     class Powersum(MacMahonSymBasis_abstract):
 
         _prefix = 'P'
         _basis_name = 'Powersum'
+
+        def _P_to_M(self, Mu, La):
+            co = 0
+            ell = len(La)
+            m = len(Mu)
+            r = len(Mu[0])
+            for k in cartesian_product_iterator( [list(range(m)) for i in range(ell)] ):
+                vsum = {i:vector(r*[0]) for i in range(m)}
+                for j in range(ell):
+                    vsum[k[j]] += vector(La[j])
+                if all(vsum[i] == vector(Mu[i]) for i in range(m)):
+                    co += 1
+            return co
         
         def product_on_basis(self, x, y):
             # Turn VectorPartition into list of components
@@ -92,105 +103,28 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "M"
         _basis_name = "Monomial"
 
-        def __mul__(self, other):
-            """
-            Multiplication of two *elements* in the monomial MacMahon basis
-            is handled by CombinatorialFreeModule via product_on_basis.
+        def product_on_basis(self, x, y):
+            return
+    M = Monomial
 
-            You almost never want to multiply the *parent* objects themselves,
-            so we just delegate back to the generic machinery.
+    class Elementary(MacMahonSymBasis_abstract):
 
-            This lets expressions like
-                Msym.M()([vp1]) * Msym.M()([vp2])
-            work as expected.
-            """
-            return MacMahonSymBasis_abstract.__mul__(self, other)
-
-        # ---------- helper utilities ----------
-
-        def _parts_from_vector_partition(self, vp):
-            """
-            Turn a VectorPartition into a list of nonzero integer tuples.
-            The zero vector [[0,...,0]] is treated as the empty partition (the unit).
-            """
-            parts = [tuple(v) for v in vp]
-            if not parts:
-                return []
-
-            # detect ambient dimension from first part
-            k = len(parts[0])
-
-            zero = (0,) * k
-            # drop zero parts entirely (unit element)
-            parts = [p for p in parts if p != zero]
-            return parts
-
-        def _make_key(self, parts):
-            """
-            Build a VectorPartition basis key from a list of integer tuples.
-            If parts is empty, return the 'unit' key [[0,...,0]].
-            """
-            if not parts:
-                # unit in degree zero: one copy of the zero vector in the right dimension
-                # infer k from the ambient algebra (self.realization_of()._k if you have it)
-                # here we guess k from the realization; if that is not available,
-                # you can hard code or pass k in some other way.
-                alg = self.realization_of()
-                k = alg._k  # this is the usual attribute you were asking about earlier
-                return VectorPartition([[0] * k])
-
-            # VectorPartition will internally put the parts in its canonical order
-            return VectorPartition(list(parts))
-
-        # ---------- actual structural constants ----------
+        _prefix = "E"
+        _basis_name = "Elementary"
 
         def product_on_basis(self, x, y):
-            
+            return
+        
+    E = Elementary
 
-            parts_x = self._parts_from_vector_partition(x)
-            parts_y = self._parts_from_vector_partition(y)
+    class Homogeneous(MacMahonSymBasis_abstract):
 
-            Lx = len(parts_x)
-            Ly = len(parts_y)
+        _prefix = "H"
+        _basis_name = "Homogeneous"
 
-            if Lx == 0:
-                return {y : self.base_ring().one()}
-            if Ly == 0:
-                return {x : self.base_ring().one()}
-
-            result = defaultdict(self.base_ring().zero)
-
-            def rec(ix, used_mask, acc):
-                if ix == Lx:
-                    full = list(acc)
-                    for j in range(Ly):
-                        if not (used_mask & (1 << j)):
-                            full.append(parts_y[j])
-                    key = self._make_key(full)
-                    result[key] += self.base_ring().one()
-                    return
-
-                v = parts_x[ix]
-
-                # unmatched
-                acc.append(v)
-                rec(ix + 1, used_mask, acc)
-                acc.pop()
-
-                # matched
-                for j in range(Ly):
-                    if not (used_mask & (1 << j)):
-                        vy = parts_y[j]
-                        vs = tuple(a + b for a,b in zip(v, vy))
-                        acc.append(vs)
-                        rec(ix + 1, used_mask | (1 << j), acc)
-                        acc.pop()
-
-            rec(0, 0, [])
-
-            coeffs = dict(result)          
-            return self._from_dict(coeffs) 
-
+        def product_on_basis(self, x, y):
+            return
+    H = Homogeneous
 
         
     
@@ -229,15 +163,15 @@ class MSymBases(Category_realization_of_parent):
 
             VP = vector_partition.VectorPartition
 
-            # Case 1: Already a vector partition
+            
             if isinstance(p, VP):
                 return self.monomial(p)
 
-            # Case 2: Empty input is not supported yet
+            
             if p == [] or p == ():
                 raise ValueError("Empty vector partition index is not supported")
 
-            # Case 3: User passed something like [[1,0],[0,1]]
+           
             if hasattr(p, "__iter__") and all(hasattr(v, "__iter__") for v in p):
                 try:
                     vp = VP(list(p))
@@ -245,7 +179,7 @@ class MSymBases(Category_realization_of_parent):
                 except Exception:
                     pass
 
-            # Case 4: Last attempt: try coercing p as a single vector
+            
             try:
                 vp = VP([p])
                 return self.monomial(vp)
