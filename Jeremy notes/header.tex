@@ -1,0 +1,376 @@
+\documentclass[reqno]{article}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[color]{xypic}
+\usepackage{amsmath,amsthm,amssymb,mathrsfs,graphics,enumitem,ytableau,tcolorbox,diagbox,fullpage,float,blkarray,etoolbox,thmtools,palatino,bbm}
+\usepackage{tikz,tikz-cd}
+\usepackage[backref=page]{hyperref}
+\usepackage{soul}
+\usepackage{cprotect} % to allow verbatim text in footnotes
+\raggedbottom
+\parskip=10bp
+\parindent=0bp
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+
+% tikz stuff
+\usetikzlibrary{calc,3d,patterns}
+\tikzset{>=latex}
+\colorlet{cyan}[rgb]{cyan}
+\definecolor{verylight}{gray}{.85}
+\definecolor{light}{gray}{.75}
+\definecolor{lightish}{gray}{.6}
+\definecolor{medium}{gray}{.5}
+\definecolor{dark}{gray}{.25}
+\definecolor{kindofdark}{gray}{.4}
+\definecolor{posetshade}{gray}{.85} %% standard shading color for all poset diagrams
+
+% colors
+\newcommand{\Red}[1]{{\color{red}{#1}}}
+\newcommand{\RED}[1]{{\color{red}{\boldmath\textbf{#1}\unboldmath}}}
+\newcommand{\Blue}[1]{{\color{blue}{#1}}}
+\newcommand{\BLUE}[1]{{\color{blue}{\boldmath\textbf{#1}\unboldmath}}}
+\newcommand{\Green}[1]{{\color{ForestGreen}{#1}}}
+\newcommand{\GREEN}[1]{{\color{ForestGreen}{\boldmath\textbf{#1}\unboldmath}}}
+
+% hyperlinks
+\hypersetup{colorlinks, citecolor=red, filecolor=black, linkcolor=blue, urlcolor=blue}
+\newcommand{\hreftext}[2]{\href{#1}{\Blue{#2}}}
+\newcommand{\hrefurl}[2]{\href{#1}{\Blue{\tt #2}}}
+
+% spacing
+\newcommand{\bigpad}{\rule[-14mm]{0mm}{30mm}}
+\newcommand{\smallpad}{\rule[-1.5mm]{0mm}{5mm}}
+\newcommand{\bigsmallpad}{\rule[-2mm]{0mm}{6mm}}
+\newcommand{\Pad}{\rule[-5mm]{0mm}{12mm}}
+\newcommand{\pad}{\rule[-3mm]{0mm}{8mm}}
+\newcommand{\padup}{\rule{0mm}{5mm}}
+\newcommand{\paddown}{\rule[-3mm]{0mm}{2mm}}
+\newcommand{\bigpaddown}{\rule[-8mm]{0mm}{5mm}}
+\newcommand{\smallpaddown}{\rule[-1.5mm]{0mm}{0mm}}
+\newcommand{\blank}{\rule{1.25in}{0.25mm}}
+\newcommand{\excise}[1]{}
+\newcommand{\commentout}[1]{}
+\newcommand{\yell}[1]{\fbox{\rule[-1mm]{0mm}{4mm} \large\bf #1 }}
+\newcommand{\bang}{$\bullet$\quad}
+\newcommand{\indnt}{\phantom{.}\qquad}
+\newcommand{\littleline}{\begin{center}\rule{4in}{0.5bp}\end{center}}
+
+% including PDF figures
+\newcommand{\includefigure}[3]{{
+  \begin{center}
+  \resizebox{#1}{#2}{\includegraphics{{#3}}}
+  \end{center}}}
+\newcommand{\includefigurewithinmath}[3]{{
+  \resizebox{#1}{#2}{\includegraphics{{#3}}}}}
+\newcommand{\insertfigure}[3]{\resizebox{#1}{#2}{\includegraphics{{#3}}}}
+
+\newcommand{\defterm}[1]{\boldmath\textbf{#1}\unboldmath}
+\newcommand{\embolden}[1]{\boldmath\textbf{#1}\unboldmath}
+
+% special combinatorial objects get put in sans-serif
+
+\newcommand{\Bool}{\mathsf{Bool}}	% boolean lattice
+\newcommand{\Braid}{\mathsf{Br}}	% braid arrangement
+\newcommand{\CST}{\mathsf{CST}}		% column-strict tableaux
+\newcommand{\GP}{\mathsf{GP}}		% generalized permutations
+\newcommand{\NC}{\mathsf{NC}}		% Noncrossing partitions
+\newcommand{\nc}{\mathsf{nc}}		% ... and their cardinalities
+\newcommand{\Par}{\mathsf{Par}}		% partitions
+\newcommand{\RSK}{\mathsf{RSK}}		% RSK algorithm
+\newcommand{\Shi}{\mathsf{Shi}}		% Shi arrangement
+%\newcommand{\Sp}{\mathsf{Sp}}		% Specht module
+\newcommand{\SYT}{\mathsf{SYT}}		% standard Young tableaux
+
+% math operators galore
+
+\DeclareMathOperator{\aff}{aff}
+\DeclareMathOperator{\Ch}{Ch}
+\DeclareMathOperator{\Char}{char}
+\DeclareMathOperator{\ch}{\mathbf{ch}}
+\DeclareMathOperator{\colspace}{colspace}
+\DeclareMathOperator{\colsum}{colsum}
+\DeclareMathOperator{\Comp}{Comp}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\corank}{corank}
+\DeclareMathOperator{\deln}{del}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\ess}{ess}
+\DeclareMathOperator{\flip}{flip}
+\DeclareMathOperator{\Gr}{\mathsf{Gr}} % Grassmannian
+\DeclareMathOperator{\Hilb}{Hilb}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\Id}{Id}
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\indeg}{indeg}
+\DeclareMathOperator{\inv}{inv}
+\DeclareMathOperator{\Irr}{Irr}
+\DeclareMathOperator{\Ind}{Ind}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\inte}{int}  %% since \int is an integral sign
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\link}{link}
+\DeclareMathOperator{\Mob}{M\ddot{o}b}
+\DeclareMathOperator{\nullity}{nullity}
+\DeclareMathOperator{\nullspace}{nullspace}
+\DeclareMathOperator{\Poin}{Poin}
+\DeclareMathOperator{\proj}{proj}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\relint}{relint}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\row}{row}
+\DeclareMathOperator{\rowspace}{rowspace}
+\DeclareMathOperator{\rowsum}{rowsum}
+\DeclareMathOperator{\Sd}{Sd}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Star}{star}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\sh}{sh}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\width}{width}
+\DeclareMathOperator{\wt}{wt}
+
+%theorem declarations using thmtools
+\declaretheorem[style=plain]{theorem}
+\declaretheorem[style=plain,sibling=theorem]{lemma}
+\declaretheorem[style=plain,sibling=theorem]{corollary}
+\declaretheorem[style=plain,sibling=theorem]{conjecture}
+\declaretheorem[style=plain,sibling=theorem]{proposition}
+\declaretheorem[style=definition,sibling=theorem]{definition}
+\declaretheorem[style=definition,qed=$\blacktriangleleft$,sibling=theorem]{example}
+\declaretheorem[style=definition,sibling=theorem]{remark}
+\declaretheorem[style=definition,sibling=theorem]{note}
+\declaretheorem[style=definition]{problem}
+
+% many more useful symbols
+\newcommand{\0}{\emptyset}
+\newcommand{\Alt}{\mathfrak{A}}
+\newcommand{\bd}{\partial}
+\newcommand{\bs}{\backslash}
+%\newcommand{\CHI}{\raisebox{0.065cm}{$\chi$}}
+\newcommand{\CHI}{\chi^{\phantom{*}}} %% only to be used with subscripts
+\newcommand{\Cl}{C\ell}
+\newcommand{\compn}{\models} % for compositions
+\newcommand{\covers}{\gtrdot}
+\newcommand{\coveredby}{\lessdot}
+\newcommand{\dedge}[1]{\overrightarrow{{#1}}}
+
+% domination order and negations:
+\newcommand{\dom}{\rhd}         \newcommand{\ndom}{\ntriangleright}
+\newcommand{\domeq}{\unrhd}     \newcommand{\ndomeq}{\ntrianglerighteq}
+\newcommand{\domby}{\lhd}       \newcommand{\ndomby}{\ntriangleleft}
+\newcommand{\dombyeq}{\unlhd}   \newcommand{\ndombyeq}{\ntrianglelefteq}
+
+\newcommand{\dprod}{\displaystyle\prod}
+\newcommand{\dsum}{\displaystyle\sum}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\eqdef}{\overset{{\rm def}}{\equiv}}
+\newcommand{\fld}{\Bbbk}
+\newcommand{\half}{\frac12}
+\newcommand{\hatzero}{\hat{\mathbf{0}}}
+\newcommand{\hatone}{\hat{\mathbf{1}}}
+\newcommand{\inj}{\hookrightarrow} % injection arrow
+\newcommand{\isom}{\cong}
+\newcommand{\join}{\vee}
+\renewcommand{\Join}{\bigvee}
+\newcommand{\Laff}{L^{\text{aff}}}
+\newcommand{\lin}[1]{\overleftrightarrow{{#1}}}
+\newcommand{\meet}{\wedge}
+\newcommand{\Meet}{\bigwedge}
+\newcommand{\ov}[1]{\overline{{#1}}}
+\newcommand{\partn}{\vdash}
+\newcommand{\qqandqq}{\qquad\text{and}\qquad}
+\newcommand{\qandq}{\quad\text{and}\quad}
+\newcommand{\qand}{\quad\text{and}}
+\newcommand{\qqorqq}{\qquad\text{or}\qquad}
+\newcommand{\qorq}{\quad\text{or}\quad}
+\newcommand{\qor}{\quad\text{or}}
+\newcommand{\qbin}[2]{\genfrac[]{0pt}{}{#1}{#2}_q} % q-binomial coefficients
+\newcommand{\sd}{\triangle} % symmetric difference
+\newcommand{\simK}{\underset{K}{\sim}} % Knuth equivalence
+\newcommand{\simJ}{\underset{J}{\sim}} % jeu de taquin equivalence
+\newcommand{\sm}{\setminus}
+\renewcommand{\st}{\colon}  %%  \st means strikeout in soul package
+\newcommand{\surj}{\twoheadrightarrow} % surjection arrow
+\newcommand{\Sym}{\mathfrak{S}} % symmetric group
+\newcommand{\un}[1]{\underset{*}{#1}}
+\newcommand{\unA}{\un{A}}
+\newcommand{\unB}{\un{B}}
+\newcommand{\unw}{\un{w}}
+\newcommand{\unx}{\un{x}}
+\newcommand{\uny}{\un{y}}
+\newcommand{\unz}{\un{z}}
+\newcommand{\x}{\times}
+\newcommand{\zerovec}{\vec{\mathbf{0}}}
+
+% sans-serif letters
+\newcommand{\sfs}{\mathsf{S}}
+\newcommand{\sfu}{\mathsf{U}}
+\newcommand{\sfw}{\mathsf{W}}
+\newcommand{\sfx}{\mathsf{X}}
+\newcommand{\sfy}{\mathsf{Y}}
+\newcommand{\sfz}{\mathsf{Z}}
+
+% boldface letters
+\renewcommand{\aa}{\mathbf{a}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\cc}{\mathbf{c}}
+\newcommand{\dd}{\mathbf{d}}
+\newcommand{\ee}{\mathbf{e}}
+\newcommand{\ff}{\mathbf{f}}
+\newcommand{\kk}{\mathbf{k}}
+\newcommand{\bl}{\mathbf{l}}
+\newcommand{\mm}{\mathbf{m}}
+\newcommand{\nn}{\mathbf{n}}
+\newcommand{\pp}{\mathbf{p}}
+\newcommand{\qq}{\mathbf{q}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\ww}{\mathbf{w}}
+\newcommand{\xx}{\mathbf{x}}
+\newcommand{\yy}{\mathbf{y}}
+\newcommand{\zz}{\mathbf{z}}
+
+% calligraphic letters
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\EE}{\mathcal{E}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\NN}{\mathcal{N}}
+\renewcommand{\O}{\mathcal{O}}
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\T}{\mathcal{T}}
+
+% mathsf letters (for Hopf monoids)
+\newcommand{\HHH}{\mathsf{H}}
+\newcommand{\hhh}{\mathsf{h}}
+\newcommand{\LLL}{\mathsf{L}}
+\newcommand{\el}{\pmb{\ell}}
+\newcommand{\MMM}{\mathsf{M}}
+\newcommand{\mmm}{\mathsf{m}}
+\newcommand{\antipode}{\mathsf{S}}
+
+%% fancy script letters -- requires mathrsfs package
+\newcommand{\BB}{\mathscr{B}}
+\newcommand{\CC}{\mathscr{C}}
+\newcommand{\FF}{\mathscr{F}}
+\newcommand{\II}{\mathscr{I}}
+\newcommand{\LL}{\mathscr{L}}
+\newcommand{\PP}{\mathscr{P}}
+\renewcommand{\SS}{\mathscr{S}}
+\newcommand{\XX}{\mathscr{X}}
+
+%% blackboard-bold letters for sets of numbers
+\newcommand{\Aa}{\mathbb{A}}
+\newcommand{\Cc}{\mathbb{C}}
+\newcommand{\Ff}{\mathbb{F}}
+\newcommand{\Nn}{\mathbb{N}}
+\newcommand{\Pp}{\mathbb{P}}
+\newcommand{\Qq}{\mathbb{Q}}
+\newcommand{\Rr}{\mathbb{R}}
+\newcommand{\Ss}{\mathbb{S}}
+\newcommand{\Zz}{\mathbb{Z}}
+\newcommand{\One}{\mathbb{1}} % all-ones vector
+
+%% representations and characters
+\newcommand{\rhodef}{\rho^{\phantom{*}}_{{\rm def}}}
+\newcommand{\rhotriv}{\rho^{\phantom{*}}_{{\rm triv}}}
+\newcommand{\rhosign}{\rho^{\phantom{*}}_{{\rm sign}}}
+\newcommand{\rhoreg}{\rho^{\phantom{*}}_{{\rm reg}}}
+\newcommand{\rhostd}{\rho^{\phantom{*}}_{{\rm std}}}
+\newcommand{\rhogeo}{\rho^{\phantom{*}}_{{\rm geo}}}
+\newcommand{\chidef}{\chi^{\phantom{*}}_{{\rm def}}}
+\newcommand{\chitriv}{\chi^{\phantom{*}}_{{\rm triv}}}
+\newcommand{\chisign}{\chi^{\phantom{*}}_{{\rm sign}}}
+\newcommand{\chistd}{\chi^{\phantom{*}}_{{\rm std}}}
+\newcommand{\chigeo}{\chi^{\phantom{*}}_{{\rm geo}}}
+\newcommand{\chitrivSn}{\chi^n_{{\rm triv}}}
+\newcommand{\chisignSn}{\chi^n_{{\rm sign}}}
+\newcommand{\chireg}{\chi^{\phantom{*}}_{{\rm reg}}}
+\newcommand{\chiother}{\chi^{\phantom{*}}_{{\rm other}}}
+\newcommand{\scp}[2]{\left\langle #1,\:#2\right\rangle}
+\newcommand{\scpG}[2]{\left\langle #1,\:#2\right\rangle_G}
+\newcommand{\scpH}[2]{\left\langle #1,\:#2\right\rangle_H}
+
+%% shorthands for lines in Hasse diagrams using xypic
+\newcommand{\Lin}[1]{\ar@{-}[#1]}
+
+\newcommand{\linel}{\ar@{-}[l]}
+\newcommand{\linell}{\ar@{-}[ll]}
+\newcommand{\liner}{\ar@{-}[r]}
+\newcommand{\linerr}{\ar@{-}[rr]}
+\newcommand{\lined}{\ar@{-}[d]}
+\newcommand{\linedr}{\ar@{-}[dr]}
+\newcommand{\linedl}{\ar@{-}[dl]}
+\newcommand{\linedd}{\ar@{-}[dd]}
+\newcommand{\lineddr}{\ar@{-}[ddr]}
+\newcommand{\linedrr}{\ar@{-}[drr]}
+\newcommand{\linedrrr}{\ar@{-}[drrr]}
+\newcommand{\lineddl}{\ar@{-}[ddl]}
+\newcommand{\linedll}{\ar@{-}[dll]}
+\newcommand{\linedlll}{\ar@{-}[dlll]}
+\newcommand{\linedllll}{\ar@{-}[dllll]}
+\newcommand{\lineu}{\ar@{-}[u]}
+\newcommand{\lineur}{\ar@{-}[ur]}
+\newcommand{\lineul}{\ar@{-}[ul]}
+\newcommand{\lineuu}{\ar@{-}[uu]}
+\newcommand{\lineuur}{\ar@{-}[uur]}
+\newcommand{\lineurr}{\ar@{-}[urr]}
+\newcommand{\lineurrr}{\ar@{-}[urrr]}
+\newcommand{\lineuul}{\ar@{-}[uul]}
+\newcommand{\lineull}{\ar@{-}[ull]}
+\newcommand{\lineulll}{\ar@{-}[ulll]}
+
+%% shorthands for lines in Hasse diagrams using tikz-cd
+\newcommand{\tlinel}{\arrow[l,dash]}
+\newcommand{\tlinell}{\arrow[ll,dash]}
+\newcommand{\tliner}{\arrow[r,dash]}
+\newcommand{\tlinerr}{\arrow[rr,dash]}
+\newcommand{\tlined}{\arrow[d,dash]}
+\newcommand{\tlinedr}{\arrow[dr,dash]}
+\newcommand{\tlinedl}{\arrow[dl,dash]}
+\newcommand{\tlinedd}{\arrow[dd,dash]}
+\newcommand{\tlineddr}{\arrow[ddr,dash]}
+\newcommand{\tlinedrr}{\arrow[drr,dash]}
+\newcommand{\tlinedrrr}{\arrow[drrr,dash]}
+\newcommand{\tlineddl}{\arrow[ddl,dash]}
+\newcommand{\tlinedll}{\arrow[dll,dash]}
+\newcommand{\tlinedlll}{\arrow[dlll,dash]}
+\newcommand{\tlinedllll}{\arrow[dllll,dash]}
+\newcommand{\tlineu}{\arrow[u,dash]}
+\newcommand{\tlineur}{\arrow[ur,dash]}
+\newcommand{\tlineul}{\arrow[ul,dash]}
+\newcommand{\tlineuu}{\arrow[uu,dash]}
+\newcommand{\tlineuur}{\arrow[uur,dash]}
+\newcommand{\tlineurr}{\arrow[urr,dash]}
+\newcommand{\tlineurrr}{\arrow[urrr,dash]}
+\newcommand{\tlineuul}{\arrow[uul,dash]}
+\newcommand{\tlineull}{\arrow[ull,dash]}
+\newcommand{\tlineulll}{\arrow[ulll,dash]}
+
+\renewcommand*\circled[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+% all the following code is required to get a dot in a cup for the disjoint-union symbol!
+\makeatletter
+\def\moverlay{\mathpalette\mov@rlay}
+\def\mov@rlay#1#2{\leavevmode\vtop{%
+   \baselineskip\z@skip \lineskiplimit-\maxdimen
+   \ialign{\hfil$\m@th#1##$\hfil\cr#2\crcr}}}
+\newcommand{\charfusion}[3][\mathord]{
+    #1{\ifx#1\mathop\vphantom{#2}\fi
+        \mathpalette\mov@rlay{#2\cr#3}
+      }
+    \ifx#1\mathop\expandafter\displaylimits\fi}
+\makeatother
+
+\newcommand{\cupdot}{\charfusion[\mathbin]{\cup}{\cdot}}
+\newcommand{\bigcupdot}{\charfusion[\mathop]{\bigcup}{\cdot}}
+\newcommand{\dju}{\cupdot}
+

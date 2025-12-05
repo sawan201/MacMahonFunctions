@@ -56,6 +56,21 @@ The solutions for $(k_1,k_2,k_3,k_4)$ and the corresponding expressions for $x_\
 \end{align*}
 So the coefficient is 3.  This could certainly be calculated algorithmically.
 
+\section{General linear algebra}
+
+Let $V$ be a vector space of finite dimension~$n$ over ground field $\Bbbk$ (it doesn't matter what it is).
+Suppose that we have an inner product $\langle u,v\rangle$ on $V$ such that $B=\{v_1,\dots,v_n\}$ and $B^*=\{v_1^*,\dots,v_n^*\}$ are dual bases, i.e., $\langle v_i,v^*_j\rangle=\delta_{ij}$ for all $i,j$ (this is the Kronecker delta).  Then for every $u\in V$, we can expand $u$ with respect to basis $B$ as
+\begin{equation} \label{expand-in-basis}
+u=\sum_{i=1}^n \langle v_i^*,\,u\rangle v_i
+\end{equation}
+because, for each $j\in[n]$, 
+\[
+\left\langle v_j^*,\ \sum_{i=1}^n \langle v_i^*,\,u\rangle v_i\right\rangle
+= \sum_{i=1}^n \langle v_i^*,\,u\rangle \langle v_j^*,\,v_i\rangle
+= \sum_{i=1}^n \langle v_i^*,\,u\rangle \delta_{ij}
+= \langle v_j^*,\,u\rangle\]
+which says that every element of $B^*$ has the same inner product with the left and right-hand sides of~\eqref{expand-in-basis}, which is necessary and sufficient for equality.
+
 \section{Transitions between bases, from Rosas 2001}
 
 Notation:
@@ -121,17 +136,24 @@ Choose = lambda u,mu: facto([u])/facto(mu)/bars(mu)
 
 Define a scalar product on $\mathfrak{M}$:
 \[\boxed{\scp{h_\lambda}{m_\mu}=\delta_{\lambda\mu}.}\]
-The idea is to use this for basis transitions.
+The idea is to use this for basis transitions, along the lines discussed earlier.  Specifically, formula~\eqref{expand-in-basis} says that for any $F\in\mathfrak{M}_u$, we have
+\begin{equation} \label{expand-Mac}
+F=\sum_{\lambda\partn u} \langle h_\lambda,\,F\rangle m_\lambda \qqandqq
+F=\sum_{\lambda\partn u} \langle m_\lambda,\,F\rangle h_\lambda.
+\end{equation}
+
+Thus we have to know how to compute inner products.
 
 There is a ``lifting map'' $\hat\rho$ sending MacMahon functions to unitary (Doubilet) symmetric functions.  Specifically:
-\begin{align*}
-\binom{u}{\lambda}|\lambda|\,m_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} m_\pi\\
-\binom{u}{\lambda}\lambda!\,e_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} e_\pi\\
-\binom{u}{\lambda}\lambda!\,h_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} h_\pi\\
-\binom{u}{\lambda}\,p_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} p_\pi\\
-\binom{u}{\lambda}|\lambda|\,f_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} f_\pi\\
-\end{align*}
-
+\begin{subequations}
+\begin{align}
+\binom{u}{\lambda}|\lambda|\,m_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} m_\pi \label{liftM}\\
+\binom{u}{\lambda}\lambda!\,e_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} e_\pi\label{liftE}\\
+\binom{u}{\lambda}\lambda!\,h_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} h_\pi\label{liftH}\\
+\binom{u}{\lambda}\,p_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} p_\pi\label{liftP}\\
+\binom{u}{\lambda}|\lambda|\,f_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} f_\pi\label{liftF}
+\end{align}
+\end{subequations}
 
 \begin{verbatim}
 m = MacMahonSymmetricFunctions(QQ).Monomial()
@@ -162,8 +184,29 @@ def LiftF(mu):
 \end{verbatim}
 
 Moreover, for all $f,g\in\mathfrak{M}_u$ we have
-\[\scp{f}{g}=u!\scp{\hat\rho(f)}{\hat\rho(g)}\]
-[Rosas, Prop.~7].  Since Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions, we can lift them to MacMahon functions.  We will need the lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$.
+\begin{equation} \label{Rosas-scalar}
+\scp{f}{g}=u!\scp{\hat\rho(f)}{\hat\rho(g)}
+\end{equation}
+[Rosas, Prop.~7].  For instance, Doubilet's Formula \#1 says that for set partitions $\pi,\sigma$ of $[n]$ we have
+\begin{equation} \label{doubilet:1}
+\langle m_\pi,\,h_\sigma\rangle=n!\delta_{\pi\sigma}
+\end{equation}
+Therefore, if $\lambda$ and $\mu$ are vector partitions of $u$ of weight $n$, then
+\begin{align*}
+\langle m_\lambda,\,h_\mu\rangle
+&= u!\scp{\hat\rho(m_\lambda)}{\hat\rho(h_\mu)} && \text{(by~\eqref{Rosas-scalar})}\\
+&= u! \frac{1}{\binom{u}{\lambda}|\lambda|\binom{u}{\mu}\mu!} \scp{\sum_{\pi\colon \type_u(\pi)=\lambda} m_\pi}{\sum_{\sigma\colon \type_u(\sigma)=\mu} h_\sigma)} && \text{(by~\eqref{liftM} and~\eqref{liftH})}\\
+&= \delta_{\lambda\mu} \frac{u!\,n!\,\#\{\pi\colon \type_u(\pi)=\lambda\}}{\binom{u}{\lambda}^2|\lambda|\,\lambda!} && \text{(by linearity and~\eqref{doubilet:1})}\\
+\end{align*}
+
+%\begin{equation} \label{expand-Mac}
+%F=\sum_{\lambda\partn u} \langle h_\lambda,\,F\rangle m_\lambda \qqandqq
+%F=\sum_{\lambda\partn u} \langle m_\lambda,\,F\rangle h_\lambda.
+%\end{equation}
+
+
+
+  Since Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions, we can lift them to MacMahon functions.  (We will need the lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$
 
 %Examples:
 %P=posets.SetPartitions(4)
