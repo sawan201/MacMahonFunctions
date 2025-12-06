@@ -1,4 +1,5 @@
 \include{header}
+\newcommand{\Mac}{\mathfrak{M}}
 \DeclareMathOperator{\type}{type}
 \begin{document}
 \section{Expanding a power-sum MacMahon symmetric function in the monomial basis}
@@ -59,17 +60,39 @@ So the coefficient is 3.  This could certainly be calculated algorithmically.
 \section{General linear algebra}
 
 Let $V$ be a vector space of finite dimension~$n$ over ground field $\Bbbk$ (it doesn't matter what it is).
-Suppose that we have an inner product $\langle u,v\rangle$ on $V$ such that $B=\{v_1,\dots,v_n\}$ and $B^*=\{v_1^*,\dots,v_n^*\}$ are dual bases, i.e., $\langle v_i,v^*_j\rangle=\delta_{ij}$ for all $i,j$ (this is the Kronecker delta).  Then for every $u\in V$, we can expand $u$ with respect to basis $B$ as
+%Suppose that we have an inner product $\langle u,v\rangle$ on $V$ such that $B=\{v_1,\dots,v_n\}$ and $B^*=\{v_1^*,\dots,v_n^*\}$ are dual bases, i.e., $\langle v_i,v^*_j\rangle=\delta_{ij}$ for all $i,j$ (this is the Kronecker delta).  Then for every $u\in V$, we can expand $u$ with respect to basis $B$ as
+%\begin{equation} \label{expand-in-basis}
+%u=\sum_{i=1}^n \langle v_i^*,\,u\rangle v_i
+%\end{equation}
+%because, for each $j\in[n]$, 
+%\[
+%\left\langle v_j^*,\ \sum_{i=1}^n \langle v_i^*,\,u\rangle v_i\right\rangle
+%= \sum_{i=1}^n \langle v_i^*,\,u\rangle \langle v_j^*,\,v_i\rangle
+%= \sum_{i=1}^n \langle v_i^*,\,u\rangle \delta_{ij}
+%= \langle v_j^*,\,u\rangle\]
+%which says that every element of $B^*$ has the same inner product with the left and right-hand sides of~\eqref{expand-in-basis}, which is necessary and sufficient for equality.
+
+\begin{proposition} \label{expansion}
+Suppose that $B=\{v_1,\dots,v_n\}$ and $B^*=\{v_1^*,\dots,v_n^*\}$ are bases for $V$ that are orthogonal, i.e.,
+\[\langle v_i,v^*_j\rangle=\delta_{ij} k_i\]
+for some nonzero constants $k_1,\dots,k_n$.  Then the unique expansion of $u$ with respect to $B$ is
 \begin{equation} \label{expand-in-basis}
-u=\sum_{i=1}^n \langle v_i^*,\,u\rangle v_i
+u = \sum_{i=1}^n \frac{\langle v_i^*,\,u\rangle}{k_i} v_i.
 \end{equation}
-because, for each $j\in[n]$, 
+\end{proposition}
+
+\begin{proof}
+For every $j\in[n]$ we have
 \[
-\left\langle v_j^*,\ \sum_{i=1}^n \langle v_i^*,\,u\rangle v_i\right\rangle
-= \sum_{i=1}^n \langle v_i^*,\,u\rangle \langle v_j^*,\,v_i\rangle
+\left\langle v_j^*,\ \sum_{i=1}^n \frac{\langle v_i^*,\,u\rangle}{k_i} v_i\right\rangle
+= \sum_{i=1}^n \frac{\langle v_i^*,\,u\rangle}{k_i} \langle v_j^*,\,v_i\rangle
 = \sum_{i=1}^n \langle v_i^*,\,u\rangle \delta_{ij}
-= \langle v_j^*,\,u\rangle\]
-which says that every element of $B^*$ has the same inner product with the left and right-hand sides of~\eqref{expand-in-basis}, which is necessary and sufficient for equality.
+= \langle v_j^*,\,u\rangle.\]
+That is, every element of $B^*$ has the same inner product with the left and right-hand sides of~\eqref{expand-in-basis}.
+This is necessary and sufficient for equality.
+\end{proof}
+
+(The best possible case is that $k_i=1$ for all $i$, i.e., the bases are orthonormal.  However, we're not always that lucky.)
 
 \section{Transitions between bases, from Rosas 2001}
 
@@ -78,65 +101,28 @@ Notation:
 \item $\Nn$ = nonnegative integers;
 \item For $u\in\Nn^k$, a \textbf{vector partition} $\lambda\partn u$ is an unordered sequence of vectors (\textbf{parts}) summing to $u$; zero vectors can be ignored.
 \item Weight of a vector partition = sum of all entries in all vectors in it (ex.: $\wt(\{120,100,100,013\})=9$)
-\item $\mathfrak{M}_u$ = MacMahon symmetric functions of homogeneous multidegree $u$
+\item $\Mac_u$ = MacMahon symmetric functions of homogeneous multidegree $u$
 \item $\sign(\lambda)=(-1)^{\text{number of parts with even sum}}$
 \item $m_\lambda,e_\lambda,h_\lambda,p_\lambda,f_\lambda$: monomial, elementary, homogeneous, power-sum, and forgotten MacMahon symmetric functions (Rosas 327--328)
 \item For a vector partition $\lambda$ in which each part $v_i$ occurs with multiplicity $m_i$, define
 \[|\lambda|=\prod_im_i! \qqandqq \lambda!=\prod_i\prod_{x\in v_i}(x!)^{m_i}.\]
 \end{itemize}
 
-\begin{verbatim}
-def bars(mu):
-    Mu = list(mu)
-    Done = []
-    output = 1
-    for part in Mu:
-        if not part in Done:
-            Done.append(part)
-            output = output * factorial(Mu.count(part))
-    return output
-
-facto = lambda mu: prod(factorial(x) for part in mu for x in part)
-\end{verbatim}
-
-A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.  There is a whole theory of MacMahon symmetric functions of unitary partitions, due to Doubilet.  These are the graded pieces $\mathfrak{M}_{(1)^k}$.
-\begin{verbatim}
-## convert a set partition to a vector partition
-## e.g.,
-##     sage: pi = SetPartition([[1,5,7],[2,3],[4,8],[6]])
-##     sage: SetPartitionToVectorPartition(pi)
-##     [[0,0,0,0,0,1,0,0],[0,0,0,1,0,0,0,1],[0,1,1,0,0,0,0,0],[1,0,0,0,1,0,1,0]]
-def SetPToVecP(pi):
-    n = pi.base_set_cardinality()
-    return VectorPartition([[1 if i in B else 0 for i in range(1,n+1)] for B in pi])
-\end{verbatim}
+A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.  There is a whole theory of MacMahon symmetric functions of unitary partitions, due to Doubilet.  These are the graded pieces $\Mac_{(1)^k}$.
 
 The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $u=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_u(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
 \[\#\{j\in B_k \mid u_1+\cdots+u_{i-1} < j \leq i_1+\cdots+u_i\}.\]
  the number of elements of $B_k$ such that
 in the $i$th equivalence class.
 
-\begin{verbatim}
-## Input: u is an integer vector of weight n; pi is a set partition of [n]
-## Output: type_u(pi), as in Rojas  p.328
-def Type(u,pi):
-    r = len(u)
-    psum = [sum(u[:k]) for k in range(r+1)]  ## partial sums
-    ell = len(pi)
-    n = sum(len(B) for B in pi)
-    lam = [[len([j for j in B if psum[i]<j<=psum[i+1]]) for i in range(r)] for B in pi]
-    return VectorPartition(lam)
-\end{verbatim}
-
 For a vector $u$ of weight $n$ and a vector partition $\lambda$ of weight $n$, the number of set partitions $\pi$ of type $\type_u(\pi)$ is
 \[\binom{u}{\lambda} := \frac{u!}{\lambda!\,|\lambda|}.\]
-\begin{verbatim}
-Choose = lambda u,mu: facto([u])/facto(mu)/bars(mu)
-\end{verbatim}
 
-Define a scalar product on $\mathfrak{M}$:
-\[\boxed{\scp{h_\lambda}{m_\mu}=\delta_{\lambda\mu}.}\]
-The idea is to use this for basis transitions, along the lines discussed earlier.  Specifically, formula~\eqref{expand-in-basis} says that for any $F\in\mathfrak{M}_u$, we have
+Define a scalar product on $\Mac$:
+\begin{equation}\label{scalar-product}
+\boxed{\scp{h_\lambda}{m_\mu}=\delta_{\lambda\mu}.}
+\end{equation}
+The idea is to use this for basis transitions, along the lines discussed earlier.  Specifically, formula~\eqref{expand-in-basis} says that for any $F\in\Mac_u$, we have
 \begin{equation} \label{expand-Mac}
 F=\sum_{\lambda\partn u} \langle h_\lambda,\,F\rangle m_\lambda \qqandqq
 F=\sum_{\lambda\partn u} \langle m_\lambda,\,F\rangle h_\lambda.
@@ -144,7 +130,7 @@ F=\sum_{\lambda\partn u} \langle m_\lambda,\,F\rangle h_\lambda.
 
 Thus we have to know how to compute inner products.
 
-There is a ``lifting map'' $\hat\rho$ sending MacMahon functions to unitary (Doubilet) symmetric functions.  Specifically:
+There is a ``lifting map'' $\hat\rho$ [Rosas 2001, Defn.~6] sending MacMahon functions to unitary (Doubilet) symmetric functions.  Specifically:
 \begin{subequations}
 \begin{align}
 \binom{u}{\lambda}|\lambda|\,m_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} m_\pi \label{liftM}\\
@@ -155,35 +141,7 @@ There is a ``lifting map'' $\hat\rho$ sending MacMahon functions to unitary (Dou
 \end{align}
 \end{subequations}
 
-\begin{verbatim}
-m = MacMahonSymmetricFunctions(QQ).Monomial()
-p = MacMahonSymmetricFunctions(QQ).Powersum()
-h = MacMahonSymmetricFunctions(QQ).Homogeneous()
-e = MacMahonSymmetricFunctions(QQ).Elementary()
-f = MacMahonSymmetricFunctions(QQ).Forgotten()           # not yet implemented
-def LiftM(mu):
-    u = sum(mu)
-    return 1/Choose(u,mu)/Bars(mu)*sum(m[SetPToVecP(pi)] \
-      for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
-def LiftP(mu):
-    u = sum(mu)
-    return 1/Choose(u,mu)*sum(p[SetPToVecP(pi)] \
-      for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
-def LiftH(mu):
-    u = sum(mu)
-    return 1/Choose(u,mu)/Facto(mu)*sum(h[SetPToVecP(pi)] \
-      for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
-def LiftE(mu):
-    u = sum(mu)
-    return 1/Choose(u,mu)/Facto(mu)*sum(e[SetPToVecP(pi)] \
-      for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
-def LiftF(mu):
-    u = sum(mu)
-    return 1/Choose(u,mu)/Bars(mu)*sum(f[SetPToVecP(pi)] \
-      for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
-\end{verbatim}
-
-Moreover, for all $f,g\in\mathfrak{M}_u$ we have
+Moreover, for all $f,g\in\Mac_u$ we have
 \begin{equation} \label{Rosas-scalar}
 \scp{f}{g}=u!\scp{\hat\rho(f)}{\hat\rho(g)}
 \end{equation}
@@ -196,17 +154,10 @@ Therefore, if $\lambda$ and $\mu$ are vector partitions of $u$ of weight $n$, th
 \langle m_\lambda,\,h_\mu\rangle
 &= u!\scp{\hat\rho(m_\lambda)}{\hat\rho(h_\mu)} && \text{(by~\eqref{Rosas-scalar})}\\
 &= u! \frac{1}{\binom{u}{\lambda}|\lambda|\binom{u}{\mu}\mu!} \scp{\sum_{\pi\colon \type_u(\pi)=\lambda} m_\pi}{\sum_{\sigma\colon \type_u(\sigma)=\mu} h_\sigma)} && \text{(by~\eqref{liftM} and~\eqref{liftH})}\\
-&= \delta_{\lambda\mu} \frac{u!\,n!\,\#\{\pi\colon \type_u(\pi)=\lambda\}}{\binom{u}{\lambda}^2|\lambda|\,\lambda!} && \text{(by linearity and~\eqref{doubilet:1})}\\
+&= \delta_{\lambda\mu} \frac{u!\,n!\,\#\{\pi\colon \type_u(\pi)=\lambda\}}{\binom{u}{\lambda}^2|\lambda|\,\lambda!} && \text{(by linearity and~\eqref{doubilet:1})}
 \end{align*}
 
-%\begin{equation} \label{expand-Mac}
-%F=\sum_{\lambda\partn u} \langle h_\lambda,\,F\rangle m_\lambda \qqandqq
-%F=\sum_{\lambda\partn u} \langle m_\lambda,\,F\rangle h_\lambda.
-%\end{equation}
-
-
-
-  Since Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions, we can lift them to MacMahon functions.  (We will need the lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$
+Since Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions, we can lift them to MacMahon functions.  (We will need the lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$
 
 %Examples:
 %P=posets.SetPartitions(4)
@@ -218,61 +169,25 @@ Therefore, if $\lambda$ and $\mu$ are vector partitions of $u$ of weight $n$, th
 %P.join(x,y)
 %P.meet(x,y)
 
-So the code could look something like this:
 
-\begin{verbatim}
-## calculate the inner product of the unitary symmetric functions m[pi] and h[sigma]
-## using Doubilet formula #1: <m[pi], h[sigma]> = n! delta(pi, sigma)
-## although, note, the below code just works on basis elements --- we need to extend it linearly
-
-MHProduct = lambda pi,sigma: 0 if pi != sigma else factorial(pi.base_set_cardinality())
-HMProduct = HMProduct
-
-## calculate the inner product of the unitary symmetric functions p[pi] and p[sigma]
-## using Doubilet formula #2: <p[pi], p[sigma]> = n! delta(pi, sigma)
-## although, note, the below code just works on basis elements --- we need to extend it linearly
-
-def PPProduct(pi,sigma):
-    if pi != sigma:
-        return 0
-    else:
-        n = pi.base_set_cardinality()
-        P = posets.SetPartitions(n)
-        mu = P.moebius_function
-        return factorial(n) / mu(P.bottom(),pi)
-
-## calculate the inner product of the unitary symmetric functions m[pi] and p[sigma]
-## using Doubilet formula #10
-## although, note, the below code just works on basis elements --- we need to extend it linearly
-
-def MPProduct(pi, sigma):
-    if not sigma in pi.coarsenings():  ## i.e., if zeta(pi, sigma) = 0
-        return 0
-    else:
-        n = pi.base_set_cardinality()
-        mu = posets.SetPartitions(n).moebius_function
-        return factorial(n) * mu(pi,sigma) / abs(mu(P.bottom(),sigma))
-PMProduct = lambda sigma, pi: MPProduct(pi, sigma)
-
-## calculate the inner product of the unitary symmetric functions m[pi] and m[sigma]
-## using Doubilet formula #7
-## although, note, the below code just works on basis elements --- we need to extend it linearly
-
-def MMProduct(pi, sigma):
-    n = pi.base_set_cardinality()
-    if not n == sigma.base_set_cardinality():
-        return 0
-    else:
-        P = posets.SetPartitions(n)
-        mu = posets.SetPartitions(n).moebius_function
-        return factorial(n) * sum( mu(pi,tau) * mu(sigma,tau) / abs(mu(P.bottom(),tau)) \
-          for tau in pi.coarsenings() if tau in sigma.coarsenings())
-
-## expand m[mu] in the h-basis
-## this code will not work until 
-def MtoH(mu):
-    sum( facto(u) * MHProduct(LiftM(mu),LiftH(nu)) * h[nu] for nu in VectorPartitions(sum(mu)) )
-\end{verbatim}
-
+Prop.~\ref{expansion} together with the scalar product~\eqref{scalar-product} says in particular that for $F\in\Mac_\uu$ we have
+\begin{equation} \label{expand-HM}
+F = \sum_{\lambda\partn\uu} \langle m_\lambda,\,F\rangle\, h_\lambda,
+\qquad\qquad
+F = \sum_{\lambda\partn\uu} \langle h_\lambda,\,F\rangle\, m_\lambda.
+\end{equation}
+In particular (I am going to be very repetitive here),
+\begin{align}
+m_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,m_\mu\rangle\, h_\lambda, &
+m_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,m_\mu\rangle\, m_\lambda, \\
+h_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,h_\mu\rangle\, h_\lambda, &
+h_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,h_\mu\rangle\, m_\lambda, \\
+e_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,e_\mu\rangle\, h_\lambda, &
+e_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,e_\mu\rangle\, m_\lambda, \\
+p_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,p_\mu\rangle\, h_\lambda, &
+p_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,p_\mu\rangle\, m_\lambda, \\
+f_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,f_\mu\rangle\, h_\lambda, &
+f_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,f_\mu\rangle\, m_\lambda.
+\end{align}
 
 \end{document}
