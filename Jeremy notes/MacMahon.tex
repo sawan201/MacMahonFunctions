@@ -57,20 +57,10 @@ The solutions for $(k_1,k_2,k_3,k_4)$ and the corresponding expressions for $x_\
 \end{align*}
 So the coefficient is 3.  This could certainly be calculated algorithmically.
 
-\section{General linear algebra}
+\section{Transitions between bases, from Rosas 2001}
 
+First, a standard linear algebra fact.
 Let $V$ be a vector space of finite dimension~$n$ over ground field $\Bbbk$ (it doesn't matter what it is).
-%Suppose that we have an inner product $\langle u,v\rangle$ on $V$ such that $B=\{v_1,\dots,v_n\}$ and $B^*=\{v_1^*,\dots,v_n^*\}$ are dual bases, i.e., $\langle v_i,v^*_j\rangle=\delta_{ij}$ for all $i,j$ (this is the Kronecker delta).  Then for every $u\in V$, we can expand $u$ with respect to basis $B$ as
-%\begin{equation} \label{expand-in-basis}
-%u=\sum_{i=1}^n \langle v_i^*,\,u\rangle v_i
-%\end{equation}
-%because, for each $j\in[n]$, 
-%\[
-%\left\langle v_j^*,\ \sum_{i=1}^n \langle v_i^*,\,u\rangle v_i\right\rangle
-%= \sum_{i=1}^n \langle v_i^*,\,u\rangle \langle v_j^*,\,v_i\rangle
-%= \sum_{i=1}^n \langle v_i^*,\,u\rangle \delta_{ij}
-%= \langle v_j^*,\,u\rangle\]
-%which says that every element of $B^*$ has the same inner product with the left and right-hand sides of~\eqref{expand-in-basis}, which is necessary and sufficient for equality.
 
 \begin{proposition} \label{expansion}
 Suppose that $B=\{v_1,\dots,v_n\}$ and $B^*=\{v_1^*,\dots,v_n^*\}$ are bases for $V$ that are orthogonal, i.e.,
@@ -92,16 +82,16 @@ That is, every element of $B^*$ has the same inner product with the left and rig
 This is necessary and sufficient for equality.
 \end{proof}
 
-(The best possible case is that $k_i=1$ for all $i$, i.e., the bases are orthonormal.  However, we're not always that lucky.)
+This proposition reduces the problem of expanding a vector in a particular basis $B$ to computing inner products with an orthogonal basis $B^*$.
+(The best possible case is that $k_i=1$ for all $i$, i.e., $B^*$ is the dual basis to $B$.  However, we're not always that lucky.)
 
-\section{Transitions between bases, from Rosas 2001}
 
 Notation:
 \begin{itemize}
 \item $\Nn$ = nonnegative integers;
 \item For $u\in\Nn^k$, a \textbf{vector partition} $\lambda\partn u$ is an unordered sequence of vectors (\textbf{parts}) summing to $u$; zero vectors can be ignored.
 \item Weight of a vector partition = sum of all entries in all vectors in it (ex.: $\wt(\{120,100,100,013\})=9$)
-\item $\Mac_u$ = MacMahon symmetric functions of homogeneous multidegree $u$
+\item $\Mac_\uu$ = MacMahon symmetric functions of homogeneous multidegree $u$
 \item $\sign(\lambda)=(-1)^{\text{number of parts with even sum}}$
 \item $m_\lambda,e_\lambda,h_\lambda,p_\lambda,f_\lambda$: monomial, elementary, homogeneous, power-sum, and forgotten MacMahon symmetric functions (Rosas 327--328)
 \item For a vector partition $\lambda$ in which each part $v_i$ occurs with multiplicity $m_i$, define
@@ -110,19 +100,19 @@ Notation:
 
 A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.  There is a whole theory of MacMahon symmetric functions of unitary partitions, due to Doubilet.  These are the graded pieces $\Mac_{(1)^k}$.
 
-The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $u=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_u(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
+The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $u=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_\uu(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
 \[\#\{j\in B_k \mid u_1+\cdots+u_{i-1} < j \leq i_1+\cdots+u_i\}.\]
  the number of elements of $B_k$ such that
 in the $i$th equivalence class.
 
-For a vector $u$ of weight $n$ and a vector partition $\lambda$ of weight $n$, the number of set partitions $\pi$ of type $\type_u(\pi)$ is
+For a vector $u$ of weight $n$ and a vector partition $\lambda$ of weight $n$, the number of set partitions $\pi$ of type $\type_\uu(\pi)$ is
 \[\binom{u}{\lambda} := \frac{u!}{\lambda!\,|\lambda|}.\]
 
 Define a scalar product on $\Mac$:
 \begin{equation}\label{scalar-product}
 \boxed{\scp{h_\lambda}{m_\mu}=\delta_{\lambda\mu}.}
 \end{equation}
-The idea is to use this for basis transitions, along the lines discussed earlier.  Specifically, formula~\eqref{expand-in-basis} says that for any $F\in\Mac_u$, we have
+The idea is to use this for basis transitions, along the lines discussed earlier.  Specifically, formula~\eqref{expand-in-basis} says that for any $F\in\Mac_\uu$, we have
 \begin{equation} \label{expand-Mac}
 F=\sum_{\lambda\partn u} \langle h_\lambda,\,F\rangle m_\lambda \qqandqq
 F=\sum_{\lambda\partn u} \langle m_\lambda,\,F\rangle h_\lambda.
@@ -133,31 +123,33 @@ Thus we have to know how to compute inner products.
 There is a ``lifting map'' $\hat\rho$ [Rosas 2001, Defn.~6] sending MacMahon functions to unitary (Doubilet) symmetric functions.  Specifically:
 \begin{subequations}
 \begin{align}
-\binom{u}{\lambda}|\lambda|\,m_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} m_\pi \label{liftM}\\
-\binom{u}{\lambda}\lambda!\,e_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} e_\pi\label{liftE}\\
-\binom{u}{\lambda}\lambda!\,h_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} h_\pi\label{liftH}\\
-\binom{u}{\lambda}\,p_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} p_\pi\label{liftP}\\
-\binom{u}{\lambda}|\lambda|\,f_\lambda &\overset{\rho}{\longmapsto} \sum_{\pi\colon \type_u(\pi)=\lambda} f_\pi\label{liftF}
+\binom{\uu}{\lambda}|\lambda|\,m_\lambda &\overset{\hat\rho}{\longmapsto} \sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi \label{liftM}\\
+\binom{\uu}{\lambda}\lambda!\,e_\lambda &\overset{\hat\rho}{\longmapsto} \sum_{\pi\colon \type_\uu(\pi)=\lambda} e_\pi\label{liftE}\\
+\binom{\uu}{\lambda}\lambda!\,h_\lambda &\overset{\hat\rho}{\longmapsto} \sum_{\pi\colon \type_\uu(\pi)=\lambda} h_\pi\label{liftH}\\
+\binom{\uu}{\lambda}\,p_\lambda &\overset{\hat\rho}{\longmapsto} \sum_{\pi\colon \type_\uu(\pi)=\lambda} p_\pi\label{liftP}\\
+\binom{\uu}{\lambda}|\lambda|\,f_\lambda &\overset{\hat\rho}{\longmapsto} \sum_{\pi\colon \type_\uu(\pi)=\lambda} f_\pi\label{liftF}
 \end{align}
 \end{subequations}
 
-Moreover, for all $f,g\in\Mac_u$ we have
+Moreover, for all $f,g\in\Mac_\uu$ we have
 \begin{equation} \label{Rosas-scalar}
-\scp{f}{g}=u!\scp{\hat\rho(f)}{\hat\rho(g)}
+\scp{f}{g}=\uu!\scp{\hat\rho(f)}{\hat\rho(g)}
 \end{equation}
-[Rosas, Prop.~7].  For instance, Doubilet's Formula \#1 says that for set partitions $\pi,\sigma$ of $[n]$ we have
-\begin{equation} \label{doubilet:1}
-\langle m_\pi,\,h_\sigma\rangle=n!\delta_{\pi\sigma}
-\end{equation}
-Therefore, if $\lambda$ and $\mu$ are vector partitions of $u$ of weight $n$, then
-\begin{align*}
-\langle m_\lambda,\,h_\mu\rangle
-&= u!\scp{\hat\rho(m_\lambda)}{\hat\rho(h_\mu)} && \text{(by~\eqref{Rosas-scalar})}\\
-&= u! \frac{1}{\binom{u}{\lambda}|\lambda|\binom{u}{\mu}\mu!} \scp{\sum_{\pi\colon \type_u(\pi)=\lambda} m_\pi}{\sum_{\sigma\colon \type_u(\sigma)=\mu} h_\sigma)} && \text{(by~\eqref{liftM} and~\eqref{liftH})}\\
-&= \delta_{\lambda\mu} \frac{u!\,n!\,\#\{\pi\colon \type_u(\pi)=\lambda\}}{\binom{u}{\lambda}^2|\lambda|\,\lambda!} && \text{(by linearity and~\eqref{doubilet:1})}
-\end{align*}
+[Rosas, Prop.~7].
 
-Since Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions, we can lift them to MacMahon functions.  (We will need the lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$
+%  For instance, Doubilet's Formula \#1 says that for set partitions $\pi,\sigma$ of $[n]$ we have
+%\begin{equation} \label{doubilet:1}
+%\langle m_\pi,\,h_\sigma\rangle=n!\delta_{\pi\sigma}
+%\end{equation}
+%Therefore, if $\lambda$ and $\mu$ are vector partitions of $u$ of weight $n$, then
+%\begin{align*}
+%\langle m_\lambda,\,h_\mu\rangle
+%&= u!\scp{\hat\rho(m_\lambda)}{\hat\rho(h_\mu)} && \text{(by~\eqref{Rosas-scalar})}\\
+%&= u! \frac{1}{\binom{u}{\lambda}|\lambda|\binom{u}{\mu}\mu!} \scp{\sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi}{\sum_{\sigma\colon \type_\uu(\sigma)=\mu} h_\sigma)} && \text{(by~\eqref{liftM} and~\eqref{liftH})}\\
+%&= \delta_{\lambda\mu} \frac{u!\,n!\,\#\{\pi\colon \type_\uu(\pi)=\lambda\}}{\binom{u}{\lambda}^2|\lambda|\,\lambda!} && \text{(by linearity and~\eqref{doubilet:1})}
+%\end{align*}
+%
+%Since Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions, we can lift them to MacMahon functions.  (We will need the lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$
 
 %Examples:
 %P=posets.SetPartitions(4)
@@ -176,18 +168,53 @@ F = \sum_{\lambda\partn\uu} \langle m_\lambda,\,F\rangle\, h_\lambda,
 \qquad\qquad
 F = \sum_{\lambda\partn\uu} \langle h_\lambda,\,F\rangle\, m_\lambda.
 \end{equation}
-In particular (I am going to be very repetitive here),
-\begin{align}
-m_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,m_\mu\rangle\, h_\lambda, &
-m_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,m_\mu\rangle\, m_\lambda, \\
-h_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,h_\mu\rangle\, h_\lambda, &
-h_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,h_\mu\rangle\, m_\lambda, \\
-e_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,e_\mu\rangle\, h_\lambda, &
-e_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,e_\mu\rangle\, m_\lambda, \\
-p_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,p_\mu\rangle\, h_\lambda, &
-p_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,p_\mu\rangle\, m_\lambda, \\
-f_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,f_\mu\rangle\, h_\lambda, &
-f_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,f_\mu\rangle\, m_\lambda.
-\end{align}
+%In particular (I am going to be very repetitive here),
+%\begin{align}
+%m_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,m_\mu\rangle\, h_\lambda, &
+%m_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,m_\mu\rangle\, m_\lambda, \\
+%h_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,h_\mu\rangle\, h_\lambda, &
+%h_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,h_\mu\rangle\, m_\lambda, \\
+%e_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,e_\mu\rangle\, h_\lambda, &
+%e_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,e_\mu\rangle\, m_\lambda, \\
+%p_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,p_\mu\rangle\, h_\lambda, &
+%p_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,p_\mu\rangle\, m_\lambda, \\
+%f_\mu &= \sum_{\lambda\partn\uu} \langle m_\lambda,\,f_\mu\rangle\, h_\lambda, &
+%f_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,f_\mu\rangle\, m_\lambda.
+%\end{align}
+Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions (which requires things like lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$).  Therefore, we should be able to compute scalar products, and thus basis expansions, for all MacMahon functions.
+For instance, for $\mu\partn\uu$, we can expand a power-sum MacMahon function $p_\mu$ in the monomial basis as follows:
+\begin{align*}
+p_\mu &= \sum_{\lambda\partn\uu} \langle h_\lambda,\,p_\mu\rangle\, m_\lambda
+	&&\text{(by~\eqref{expand-Mac})}\\
+&=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(h_\lambda),\,\hat\rho(p_\mu)\rangle\, m_\lambda
+	&&\text{(by~\eqref{Rosas-scalar})}\\
+&=  \uu! \sum_{\lambda\partn\uu} \left\langle \frac{1}{\binom{\uu}{\lambda}\lambda!} \sum_{\pi\colon \type_\uu(\pi)=\lambda} h_\pi, \ \ \frac{1}{\binom{\uu}{\mu}} \sum_{\sigma\colon \type_\uu(\sigma)=\mu} p_\sigma \right\rangle\, m_\lambda
+	&&\text{(by~\eqref{liftH} and~\eqref{liftP})}\\
+&=  \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}\lambda!}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \left\langle h_\pi,\,p_\sigma \right\rangle\, m_\lambda
+	&&\text{(by bilinearity)}\\
+&=  \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}\lambda!}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    n! \zeta(\sigma,\pi) m_\lambda
+	&&\text{(by~Doubilet formula \#3)}\\
+&=  \frac{n!\,\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}\lambda!}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \sigma\leq\pi}}
+    m_\lambda
+\end{align*}
+which is something we could implement.
+
+
+% Doubilet's Formula \#1 says that for set partitions $\pi,\sigma$ of $[n]$ we have
+%\begin{equation} \label{doubilet:1}
+%\langle m_\pi,\,h_\sigma\rangle=n!\delta_{\pi\sigma}
+%\end{equation}
+%Therefore, if $\lambda$ and $\mu$ are vector partitions of $u$ of weight $n$, then
+%\begin{align*}
+%\langle m_\lambda,\,h_\mu\rangle
+%&= u!\scp{\hat\rho(m_\lambda)}{\hat\rho(h_\mu)} && \text{(by~\eqref{Rosas-scalar})}\\
+%&= u! \frac{1}{\binom{u}{\lambda}|\lambda|\binom{u}{\mu}\mu!} \scp{\sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi}{\sum_{\sigma\colon \type_\uu(\sigma)=\mu} h_\sigma)} && \text{(by~\eqref{liftM} and~\eqref{liftH})}\\
+%&= \delta_{\lambda\mu} \frac{u!\,n!\,\#\{\pi\colon \type_\uu(\pi)=\lambda\}}{\binom{u}{\lambda}^2|\lambda|\,\lambda!} && \text{(by linearity and~\eqref{doubilet:1})}
+%\end{align*}
 
 \end{document}
