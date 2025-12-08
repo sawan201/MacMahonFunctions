@@ -153,7 +153,7 @@ PHProduct = lambda pi,sigma: EPProduct(sigma, pi)
 
 ## Doubilet formula #4
 
-EPProduct = lambda pi,sigma: pi.to_partition().sign()) if pi in sigma.coarsenings() else 0
+EPProduct = lambda pi,sigma: sigma.to_partition().sign() if pi in sigma.coarsenings() else 0
 PEProduct = lambda pi,sigma: EPProduct(sigma, pi)
 
 ## Doubilet formula #5
