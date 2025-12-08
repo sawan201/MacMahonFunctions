@@ -104,6 +104,10 @@ def LiftF(mu):
 ##  In general XYProduct(pi, sigma) returns the scalar product <X[pi], Y[sigma]>,
 ##  where X,Y in {m,p,e,h,f} and pi, sigma are set partitions.
 ##  These functions implement the formulas in Doubilet 1972, Appendix 2, p. 394.
+##
+##  NOTE: Buried in Doubilet, and skimmed over in Rosas, is the fact that there
+##    is an extra n! in all of Doubilet's formulas.  I have taken these out.
+##
 ##  TO DO: Extend so that they work on more general linear combinations of basis elements.
 ##
 ################################################################################
@@ -128,7 +132,7 @@ def SPLambda(sigma, pi):
 
 ## Doubilet formula #1
 
-MHProduct = lambda pi,sigma: 0 if pi != sigma else Factorial(pi.base_set_cardinality())
+MHProduct = lambda pi,sigma: 0 if pi != sigma else 1
 HMProduct = MHProduct
 
 ## Doubilet formula #2
@@ -140,16 +144,16 @@ def PPProduct(pi,sigma):
         n = pi.base_set_cardinality()
         P = posets.SetPartitions(n)
         mu = P.moebius_function
-        return Factorial(n) / mu(P.bottom(),pi)
+        return 1 / mu(P.bottom(),pi)
 
 ## Doubilet formula #3
 
-HPProduct = lambda pi,sigma: Factorial(pi.base_set_cardinality()) if pi in sigma.coarsenings() else 0
+HPProduct = lambda pi,sigma: 1 if pi in sigma.coarsenings() else 0
 PHProduct = lambda pi,sigma: EPProduct(sigma, pi)
 
 ## Doubilet formula #4
 
-EPProduct = lambda pi,sigma: pi.to_partition().sign() * Factorial(pi.base_set_cardinality()) if pi in sigma.coarsenings() else 0
+EPProduct = lambda pi,sigma: pi.to_partition().sign()) if pi in sigma.coarsenings() else 0
 PEProduct = lambda pi,sigma: EPProduct(sigma, pi)
 
 ## Doubilet formula #5
@@ -160,7 +164,7 @@ def EEProduct(pi, sigma):
         return 0
     else:
         xi = posets.SetPartitions(n).meet(sigma, pi)
-        return product(Factorial(j) for j in xi.to_partition()) * Factorial(n)
+        return product(Factorial(j) for j in xi.to_partition())
 
 ## Doubilet formula #6
 
@@ -170,7 +174,7 @@ def EHProduct(pi, sigma):
         return 0
     else:
         P = SetPartitions(n)
-        return Factorial(n) if P.meet(sigma, pi) == P.bottom() else 0
+        return 1 if P.meet(sigma, pi) == P.bottom() else 0
 HEProduct = EHProduct
 
 ## Doubilet formula #7
@@ -182,7 +186,7 @@ def MMProduct(pi, sigma):
     else:
         P = posets.SetPartitions(n)
         mu = posets.SetPartitions(n).moebius_function
-        return Factorial(n) * sum( mu(pi,tau) * mu(sigma,tau) / abs(mu(P.bottom(),tau)) for tau in pi.coarsenings() if tau in sigma.coarsenings())
+        return sum( mu(pi,tau) * mu(sigma,tau) / abs(mu(P.bottom(),tau)) for tau in pi.coarsenings() if tau in sigma.coarsenings())
 
 ## Doubilet formula #8
 
@@ -193,7 +197,7 @@ def EMProduct(pi, sigma):
     elif not pi in sigma.coarsenings():
         return 0
     else:
-        return Factorial(n) * sigma.to_partition().sign() * prod(Factorial(i) for i in SPLambda(sigma, pi))
+        return sigma.to_partition().sign() * prod(Factorial(i) for i in SPLambda(sigma, pi))
 
 ## Doubilet formula #9
 
@@ -207,7 +211,7 @@ def MPProduct(pi, sigma):
     else:
         n = pi.base_set_cardinality()
         mu = posets.SetPartitions(n).moebius_function
-        return Factorial(n) * mu(pi,sigma) / abs(mu(P.bottom(),sigma))
+        return mu(pi,sigma) / abs(mu(P.bottom(),sigma))
 PMProduct = lambda sigma, pi: MPProduct(pi, sigma)
 
 ## Doubilet formula #11
@@ -219,7 +223,7 @@ def FMProduct(pi, sigma):
     else:
         P = posets.SetPartitions(n)
         mu = P.moebius_function
-        return Factorial(n) * sum(abs(mu(pi,tau))*mu(sigma, tau)/abs(mu(P.bottom(),tau)) \
+        return sum(abs(mu(pi,tau))*mu(sigma, tau)/abs(mu(P.bottom(),tau)) \
           for tau in P.join(pi, sigma).coarsenings())
 
 MFProduct = lambda pi, sigma: FMProduct(sigma, pi)
@@ -233,7 +237,7 @@ def FFProduct(pi, sigma):
     else:
         P = posets.SetPartitions(n)
         mu = P.moebius_function
-        return pi.to_partition().sign() * sigma.to_partition().sign() * Factorial(n) * \
+        return pi.to_partition().sign() * sigma.to_partition().sign() * \
           sum(mu(pi,tau)*mu(sigma, tau)/abs(mu(P.bottom(),tau)) for tau in P.join(pi, sigma).coarsenings())
 
 ## Doubilet formula #13
@@ -245,7 +249,7 @@ def FHProduct(pi, sigma):
     elif not sigma in pi.coarsenings():
         return 0
     else:
-        return Factorial(n) * prod(Factorial(j) for j in SPLambda(pi, sigma))
+        return prod(Factorial(j) for j in SPLambda(pi, sigma))
 
 HFProduct = lambda pi, sigma: FHProduct(sigma, pi)
 
@@ -258,12 +262,12 @@ def FPProduct(pi, sigma):
     elif not sigma in pi.coarsenings():
         return 0
     else:
-        return pi.to_partition().sign() * sigma.to_partition().sign() * Factorial(n) * mu(pi, sigma) / abs(mu(P.bottom(),sigma))
+        return pi.to_partition().sign() * sigma.to_partition().sign() * mu(pi, sigma) / abs(mu(P.bottom(),sigma))
 PFProduct = lambda pi, sigma: FPProduct(sigma, pi)
 
 ## Doubilet formula #15
 
-FEProduct = lambda pi, sigma: 0 if pi != sigma else Factorial(sigma.base_set_cardinality()) * pi.to_partition().sign() 
+FEProduct = lambda pi, sigma: 0 if pi != sigma else pi.to_partition().sign() 
 EFProduct = lambda pi, sigma: FEProduct(sigma, pi)
 
 ################################################################################
@@ -282,7 +286,7 @@ def PtoM2(mu):
     u = sum(mu)
     n = sum(u)
     P = posets.SetPartitions(n)
-    return Factorial(n) * Factorial(u) / Choose(u,mu) * \
+    return Factorial(u) / Choose(u,mu) * \
       sum( 1 / Choose(u, la) / Factorial(la) * len([(pi,sigma) for pi in P for sigma in P if \
       Type(u,pi) == la and Type(u,sigma) == mu and pi in sigma.coarsenings()]) * m[la] \
       for la in VectorPartitions(u))
@@ -318,3 +322,10 @@ def PtoM2(mu):
 ##  2*M[[1, 1]]
 ##  M[[0, 1], [1, 0]] + M[[1, 1]]
 ##  
+##  Actually, neither of these is correct.  We should be getting
+##     [ p[01,10] ] = [1 1] [m[01,10] ].
+##     [   p[11]  ] = [1 0] [  m[11]  ]
+##  The matrices for PtoM2 and PtoM are respectively
+##     [2 2]           [1 0]
+##     [2 0]    and    [1 1]
+##  So PtoM2 is promising since it is just off by the constant 2.
