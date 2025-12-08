@@ -164,8 +164,6 @@ p_\mu &= \boxed{ \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{\#\
     m_\lambda}
 \end{align*}
 
-Similarly, we can expand the other bases in the $m$-basis:
-
 \begin{align*}
 h_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(h_\lambda),\,\hat\rho(h_\mu)\rangle\, m_\lambda
 	&&\text{(by~\eqref{expand-Mac} and~\eqref{Rosas-scalar})}\\
@@ -211,25 +209,64 @@ f_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(h_\lambda),\,\hat\rho(f_
 
 \section{Expansions in the $h$-basis}
 
-
 \begin{align*}
 m_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(m_\mu)\rangle\, h_\lambda
 	&&\text{(by~\eqref{expand-Mac} and~\eqref{Rosas-scalar})}\\
+&= \uu! \sum_{\lambda\partn\uu} \left\langle \frac{1}{\binom{\uu}{\lambda}|\lambda|} \sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi, \ \ \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_{\sigma\colon \type_\uu(\sigma)=\mu} m_\sigma \right\rangle\, h_\lambda
+	&&\text{(by~\eqref{liftM} twice)}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \left\langle m_\pi,\ m_\sigma \right\rangle\, h_\lambda
+	&&\text{(by bilinearity)}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \sum_{\tau\geq\pi\join\sigma} \frac{\mu(\pi,\tau)\mu(\sigma,\tau)}{\mu(\hatzero,\tau)}\, h_\lambda
+	&&\text{(by Doubilet formula \#7)}\\
 \end{align*}
 
 \begin{align*}
 p_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(p_\mu)\rangle\, h_\lambda
 	&&\text{(by~\eqref{expand-Mac} and~\eqref{Rosas-scalar})}\\
+&=  \uu! \sum_{\lambda\partn\uu} \left\langle \frac{1}{\binom{\uu}{\lambda}|\lambda|} \sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi, \ \ \frac{1}{\binom{\uu}{\mu}} \sum_{\sigma\colon \type_\uu(\sigma)=\mu} p_\sigma \right\rangle\, h_\lambda
+	&&\text{(by~\eqref{liftM} and~\eqref{liftP})}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \left\langle m_\pi,\ p_\sigma \right\rangle\, h_\lambda
+	&&\text{(by bilinearity)}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \pi\leq\sigma}}
+    \frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|}\, h_\lambda
+	&&\text{(by Doubilet formula \#10)}\\
 \end{align*}
 
 \begin{align*}
 e_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(e_\mu)\rangle\, h_\lambda
 	&&\text{(by~\eqref{expand-Mac} and~\eqref{Rosas-scalar})}\\
+&=  \uu! \sum_{\lambda\partn\uu} \left\langle \frac{1}{\binom{\uu}{\lambda}|\lambda|} \sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi, \ \ \frac{1}{\binom{\uu}{\mu}\mu!} \sum_{\sigma\colon \type_\uu(\sigma)=\mu} e_\sigma \right\rangle\, h_\lambda
+	&&\text{(by~\eqref{liftM} and~\eqref{liftE})}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \left\langle m_\pi,\ e_\sigma \right\rangle\, h_\lambda
+	&&\text{(by bilinearity)}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \pi\leq\sigma}}
+    \sign(\pi) \lambda(\pi,\sigma)!\, h_\lambda
+	&&\text{(by Doubilet formula \#8)}\\
 \end{align*}
 
 \begin{align*}
 f_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(f_\mu)\rangle\, h_\lambda
 	&&\text{(by~\eqref{expand-Mac} and~\eqref{Rosas-scalar})}\\
+&=  \uu! \sum_{\lambda\partn\uu} \left\langle \frac{1}{\binom{\uu}{\lambda}|\lambda|} \sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi, \ \ \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_{\sigma\colon \type_\uu(\sigma)=\mu} f_\sigma \right\rangle\, h_\lambda
+	&&\text{(by~\eqref{liftM} and~\eqref{liftF})}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \left\langle m_\pi,\ f_\sigma \right\rangle\, h_\lambda
+	&&\text{(by bilinearity)}\\
+&= \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \sum_{\tau\geq\sigma\join\pi} \frac{|\mu(\sigma,\tau)|\cdot\mu(\pi,\tau)}{\mu(\hatzero,\tau)}\, h_\lambda
+	&&\text{(by Doubilet formula \#11)}\\
 \end{align*}
 
 \end{document}

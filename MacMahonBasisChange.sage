@@ -319,9 +319,61 @@ def FtoM(mu):
     u = sum(mu)
     n = sum(u)
     P = posets.SetPartitions(n)
-    return Factorial(u) / Choose(u,mu) / Bar(mu) * \
+    return Factorial(u) / Choose(u,mu) / Bars(mu) * \
       sum( 1 / Choose(u, la) / Factorial(la) * \
         sum(Factorial(SPLambda(sigma, pi)) for pi in P for sigma in P if \
           Type(u,pi) == la and Type(u,sigma) == mu and pi in sigma.coarsenings()) \
         * m[la] for la in VectorPartitions(u))
+
+def MtoH(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    Mu = P.moebius_function
+    Ze = P.bottom()
+    return Factorial(u) / Choose(u,mu) / Bars(mu) * \
+    sum( 1 / Choose(u, la) / Bars(la) * \
+        sum( \
+            sum( Mu(pi,tau)*Mu(sigma,tau)/Mu(Ze,tau) \
+            for tau in P.join(pi, sigma).coarsenings() ) \
+        for pi in P for sigma in P if Type(u,pi) == la and Type(u,sigma) == mu) \
+    * h[la] for la in VectorPartitions(u))
+
+def PtoH(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    Mu = P.moebius_function
+    Ze = P.bottom()
+    return Factorial(u) / Choose(u,mu) * \
+    sum( 1 / Choose(u, la) / Bars(la) * \
+        sum( Mu(pi,sigma) / abs(Mu(Ze,sigma)) \
+        for pi in P for sigma in P if Type(u,pi) == la and Type(u,sigma) == mu and sigma in pi.coarsenings() ) \
+    * h[la] for la in VectorPartitions(u))
+
+def EtoH(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    Mu = P.moebius_function
+    Ze = P.bottom()
+    return Factorial(u) / Choose(u,mu) / Factorial(mu) * \
+    sum( 1 / Choose(u, la) / Bars(la) * \
+        sum( pi.to_partition().sign() * SPLambda(pi, sigma) \
+        for pi in P for sigma in P if Type(u,pi) == la and Type(u,sigma) == mu and sigma in pi.coarsenings() ) \
+    * h[la] for la in VectorPartitions(u))
+
+def FtoH(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    Mu = P.moebius_function
+    Ze = P.bottom()
+    return Factorial(u) / Choose(u,mu) / Bars(mu) * \
+    sum( 1 / Choose(u, la) / Bars(la) * \
+        sum( \
+            sum( abs(Mu(sigma,tau))*Mu(pi,tau)/Mu(Ze,tau) \
+            for tau in P.join(pi, sigma).coarsenings() ) \
+        for pi in P for sigma in P if Type(u,pi) == la and Type(u,sigma) == mu) \
+    * h[la] for la in VectorPartitions(u))
 
