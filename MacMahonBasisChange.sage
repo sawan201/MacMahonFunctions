@@ -8,25 +8,30 @@
 ################################################################################
 ################################################################################
 
-## bars(mu)
+## Factorial(thing)
+## input: a number, a list, or a VectorPartition mu (I am getting tired of distinguishing between them)
+## output: the product of factorials of all numbers at the lowest level of thing
+
+def Factorial(thing):
+    try:
+        return factorial(thing)
+    except:
+        return prod(Factorial(x) for x in thing)
+        
+## Bars(mu)
 ## input: a VectorPartition mu
 ## output: $|\mu|$ as defined in Rosas (2001), p.330, before Theorem 3
 
-def bars(mu):
+def Bars(mu):
     Mu = list(mu)
     Done = []
     output = 1
     for part in Mu:
         if not part in Done:
             Done.append(part)
-            output = output * factorial(Mu.count(part))
+            output = output * Factorial(Mu.count(part))
     return output
 
-## facto(mu)
-## input: a VectorPartition mu
-## output: $\mu!$ as defined in Rosas (2001), p.330, before Theorem 3
-
-facto = lambda mu: prod(factorial(x) for part in mu for x in part)
 
 ## SetPToVecP(pi)
 ## input: a SetPartition pi of the set [n]
@@ -52,7 +57,7 @@ def Type(u,pi):
 ## Input: u is a vector of weight n and mu is a vector partition of weight n
 ## Output: $\binom{u}{\lambda}$, as defined in Rosas (2001), p.332, Prop. 5.
 
-Choose = lambda u,mu: facto([u])/facto(mu)/bars(mu)
+Choose = lambda u,mu: Factorial([u])/Factorial(mu)/Bars(mu)
 
 ################################################################################
 ################################################################################
@@ -72,7 +77,7 @@ m = MacMahonSymmetricFunctions(QQ).Monomial()
 p = MacMahonSymmetricFunctions(QQ).Powersum()
 h = MacMahonSymmetricFunctions(QQ).Homogeneous()
 e = MacMahonSymmetricFunctions(QQ).Elementary()
-f = MacMahonSymmetricFunctions(QQ).Forgotten()           # not yet implemented
+# f = MacMahonSymmetricFunctions(QQ).Forgotten()           # not yet implemented
 
 def LiftM(mu):
     u = sum(mu)
@@ -82,10 +87,10 @@ def LiftP(mu):
     return 1/Choose(u,mu)*sum(p[SetPToVecP(pi)] for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
 def LiftH(mu):
     u = sum(mu)
-    return 1/Choose(u,mu)/Facto(mu)*sum(h[SetPToVecP(pi)] for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
+    return 1/Choose(u,mu)/Factorial(mu)*sum(h[SetPToVecP(pi)] for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
 def LiftE(mu):
     u = sum(mu)
-    return 1/Choose(u,mu)/Facto(mu)*sum(e[SetPToVecP(pi)] for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
+    return 1/Choose(u,mu)/Factorial(mu)*sum(e[SetPToVecP(pi)] for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
 def LiftF(mu):
     u = sum(mu)
     return 1/Choose(u,mu)/Bars(mu)*sum(f[SetPToVecP(pi)] for pi in SetPartitions(sum(u)) if Type(u,pi)==mu)
@@ -123,8 +128,8 @@ def SPLambda(sigma, pi):
 
 ## Doubilet formula #1
 
-MHProduct = lambda pi,sigma: 0 if pi != sigma else factorial(pi.base_set_cardinality())
-HMProduct = HMProduct
+MHProduct = lambda pi,sigma: 0 if pi != sigma else Factorial(pi.base_set_cardinality())
+HMProduct = MHProduct
 
 ## Doubilet formula #2
 
@@ -135,16 +140,16 @@ def PPProduct(pi,sigma):
         n = pi.base_set_cardinality()
         P = posets.SetPartitions(n)
         mu = P.moebius_function
-        return factorial(n) / mu(P.bottom(),pi)
+        return Factorial(n) / mu(P.bottom(),pi)
 
 ## Doubilet formula #3
 
-HPProduct = lambda pi,sigma: factorial(pi.base_set_cardinality()) if pi in sigma.coarsenings() else 0
+HPProduct = lambda pi,sigma: Factorial(pi.base_set_cardinality()) if pi in sigma.coarsenings() else 0
 PHProduct = lambda pi,sigma: EPProduct(sigma, pi)
 
 ## Doubilet formula #4
 
-EPProduct = lambda pi,sigma: pi.to_partition().sign() * factorial(pi.base_set_cardinality()) if pi in sigma.coarsenings() else 0
+EPProduct = lambda pi,sigma: pi.to_partition().sign() * Factorial(pi.base_set_cardinality()) if pi in sigma.coarsenings() else 0
 PEProduct = lambda pi,sigma: EPProduct(sigma, pi)
 
 ## Doubilet formula #5
@@ -155,7 +160,7 @@ def EEProduct(pi, sigma):
         return 0
     else:
         xi = posets.SetPartitions(n).meet(sigma, pi)
-        return product(factorial(j) for j in xi.to_partition()) * factorial(n)
+        return product(Factorial(j) for j in xi.to_partition()) * Factorial(n)
 
 ## Doubilet formula #6
 
@@ -165,8 +170,8 @@ def EHProduct(pi, sigma):
         return 0
     else:
         P = SetPartitions(n)
-        return factorial(n) if P.meet(sigma, pi) == P.bottom() else 0
-EHProduct = HEProduct
+        return Factorial(n) if P.meet(sigma, pi) == P.bottom() else 0
+HEProduct = EHProduct
 
 ## Doubilet formula #7
 
@@ -177,7 +182,7 @@ def MMProduct(pi, sigma):
     else:
         P = posets.SetPartitions(n)
         mu = posets.SetPartitions(n).moebius_function
-        return factorial(n) * sum( mu(pi,tau) * mu(sigma,tau) / abs(mu(P.bottom(),tau)) for tau in pi.coarsenings() if tau in sigma.coarsenings())
+        return Factorial(n) * sum( mu(pi,tau) * mu(sigma,tau) / abs(mu(P.bottom(),tau)) for tau in pi.coarsenings() if tau in sigma.coarsenings())
 
 ## Doubilet formula #8
 
@@ -188,7 +193,7 @@ def EMProduct(pi, sigma):
     elif not pi in sigma.coarsenings():
         return 0
     else:
-        return factorial(n) * sigma.to_partition().sign() * prod(factorial(i) for i in SPLambda(sigma, pi))
+        return Factorial(n) * sigma.to_partition().sign() * prod(Factorial(i) for i in SPLambda(sigma, pi))
 
 ## Doubilet formula #9
 
@@ -202,7 +207,7 @@ def MPProduct(pi, sigma):
     else:
         n = pi.base_set_cardinality()
         mu = posets.SetPartitions(n).moebius_function
-        return factorial(n) * mu(pi,sigma) / abs(mu(P.bottom(),sigma))
+        return Factorial(n) * mu(pi,sigma) / abs(mu(P.bottom(),sigma))
 PMProduct = lambda sigma, pi: MPProduct(pi, sigma)
 
 ## Doubilet formula #11
@@ -214,10 +219,10 @@ def FMProduct(pi, sigma):
     else:
         P = posets.SetPartitions(n)
         mu = P.moebius_function
-        return factorial(n) * sum(abs(mu(pi,tau))*mu(sigma, tau)/abs(mu(P.bottom(),tau)) \
+        return Factorial(n) * sum(abs(mu(pi,tau))*mu(sigma, tau)/abs(mu(P.bottom(),tau)) \
           for tau in P.join(pi, sigma).coarsenings())
 
-MFProduct = lambda pi, sigma: FMProduct(sigma, pi):
+MFProduct = lambda pi, sigma: FMProduct(sigma, pi)
 
 ## Doubilet formula #12
 
@@ -228,7 +233,7 @@ def FFProduct(pi, sigma):
     else:
         P = posets.SetPartitions(n)
         mu = P.moebius_function
-        return pi.to_partition().sign() * sigma.to_partition().sign() * factorial(n) * \
+        return pi.to_partition().sign() * sigma.to_partition().sign() * Factorial(n) * \
           sum(mu(pi,tau)*mu(sigma, tau)/abs(mu(P.bottom(),tau)) for tau in P.join(pi, sigma).coarsenings())
 
 ## Doubilet formula #13
@@ -240,7 +245,7 @@ def FHProduct(pi, sigma):
     elif not sigma in pi.coarsenings():
         return 0
     else:
-        return factorial(n) * prod(factorial(j) for j in SPLambda(pi, sigma))
+        return Factorial(n) * prod(Factorial(j) for j in SPLambda(pi, sigma))
 
 HFProduct = lambda pi, sigma: FHProduct(sigma, pi)
 
@@ -253,11 +258,63 @@ def FPProduct(pi, sigma):
     elif not sigma in pi.coarsenings():
         return 0
     else:
-        return pi.to_partition().sign() * sigma.to_partition().sign() * factorial(n) * mu(pi, sigma) / abs(mu(P.bottom(),sigma)
+        return pi.to_partition().sign() * sigma.to_partition().sign() * Factorial(n) * mu(pi, sigma) / abs(mu(P.bottom(),sigma))
 PFProduct = lambda pi, sigma: FPProduct(sigma, pi)
 
 ## Doubilet formula #15
 
-FEProduct = lambda pi, sigma: 0 if pi != sigma else factorial(sigma.base_set_cardinality()) * pi.to_partition().sign() 
+FEProduct = lambda pi, sigma: 0 if pi != sigma else Factorial(sigma.base_set_cardinality()) * pi.to_partition().sign() 
 EFProduct = lambda pi, sigma: FEProduct(sigma, pi)
 
+################################################################################
+################################################################################
+################################################################################
+##
+##  Actual basis change formulas
+##
+################################################################################
+################################################################################
+################################################################################
+
+## Given a vector partition mu, expand p[mu] in the monomial basis
+
+def PtoM2(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    return Factorial(n) * Factorial(u) / Choose(u,mu) * \
+      sum( 1 / Choose(u, la) / Factorial(la) * len([(pi,sigma) for pi in P for sigma in P if \
+      Type(u,pi) == la and Type(u,sigma) == mu and pi in sigma.coarsenings()]) * m[la] \
+      for la in VectorPartitions(u))
+
+##  This does not agree with the function PtoM in PtoM.sage.  For example:
+##  sage: u = [2,0]
+##  ....: for mu in VectorPartitions(u):
+##  ....:     print(mu)
+##  ....:     print(PtoM2(mu))
+##  ....:     print(sum(PtoM(mu,La)*m[La] for La in VectorPartitions(u)))
+##  ....:     print()
+##  ....:
+##  [[1, 0], [1, 0]]
+##  4*M[[1, 0], [1, 0]] + 2*M[[2, 0]]
+##  2*M[[1, 0], [1, 0]]
+##  
+##  [[2, 0]]
+##  2*M[[2, 0]]
+##  M[[1, 0], [1, 0]] + M[[2, 0]]
+##  
+##  sage: u = [1,1]
+##  ....: for mu in VectorPartitions(u):
+##  ....:     print(mu)
+##  ....:     print(PtoM2(mu))
+##  ....:     print(sum(PtoM(mu,La)*m[La] for La in VectorPartitions(u)))
+##  ....:     print()
+##  ....:
+##  [[0, 1], [1, 0]]
+##  2*M[[0, 1], [1, 0]] + 2*M[[1, 1]]
+##  M[[0, 1], [1, 0]]
+##  
+##  [[1, 1]]
+##  2*M[[1, 1]]
+##  M[[0, 1], [1, 0]] + M[[1, 1]]
+##  
