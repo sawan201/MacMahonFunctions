@@ -282,7 +282,7 @@ EFProduct = lambda pi, sigma: FEProduct(sigma, pi)
 
 ## Given a vector partition mu, expand p[mu] in the monomial basis
 
-def PtoM2(mu):
+def PtoM(mu):
     u = sum(mu)
     n = sum(u)
     P = posets.SetPartitions(n)
@@ -291,41 +291,37 @@ def PtoM2(mu):
       Type(u,pi) == la and Type(u,sigma) == mu and pi in sigma.coarsenings()]) * m[la] \
       for la in VectorPartitions(u))
 
-##  This does not agree with the function PtoM in PtoM.sage.  For example:
-##  sage: u = [2,0]
-##  ....: for mu in VectorPartitions(u):
-##  ....:     print(mu)
-##  ....:     print(PtoM2(mu))
-##  ....:     print(sum(PtoM(mu,La)*m[La] for La in VectorPartitions(u)))
-##  ....:     print()
-##  ....:
-##  [[1, 0], [1, 0]]
-##  4*M[[1, 0], [1, 0]] + 2*M[[2, 0]]
-##  2*M[[1, 0], [1, 0]]
-##  
-##  [[2, 0]]
-##  2*M[[2, 0]]
-##  M[[1, 0], [1, 0]] + M[[2, 0]]
-##  
-##  sage: u = [1,1]
-##  ....: for mu in VectorPartitions(u):
-##  ....:     print(mu)
-##  ....:     print(PtoM2(mu))
-##  ....:     print(sum(PtoM(mu,La)*m[La] for La in VectorPartitions(u)))
-##  ....:     print()
-##  ....:
-##  [[0, 1], [1, 0]]
-##  2*M[[0, 1], [1, 0]] + 2*M[[1, 1]]
-##  M[[0, 1], [1, 0]]
-##  
-##  [[1, 1]]
-##  2*M[[1, 1]]
-##  M[[0, 1], [1, 0]] + M[[1, 1]]
-##  
-##  Actually, neither of these is correct.  We should be getting
-##     [ p[01,10] ] = [1 1] [m[01,10] ].
-##     [   p[11]  ] = [1 0] [  m[11]  ]
-##  The matrices for PtoM2 and PtoM are respectively
-##     [2 2]           [1 0]
-##     [2 0]    and    [1 1]
-##  So PtoM2 is promising since it is just off by the constant 2.
+## Given a vector partition mu, expand h[mu] in the monomial basis
+
+def HtoM(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    return Factorial(u) / Choose(u,mu) / Factorial(mu) * \
+      sum( 1 / Choose(u, la) / Factorial(la) * sum(Factorial(P.meet(sigma,pi).to_partition()) \
+      for sigma in P for pi in P if Type(u,pi) == la and Type(u,sigma) == mu) * m[la] \
+      for la in VectorPartitions(u))
+
+## Given a vector partition mu, expand e[mu] in the monomial basis
+
+def EtoM(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    return Factorial(u) / Choose(u,mu) / Factorial(mu) * \
+      sum( 1 / Choose(u, la) / Factorial(la) * len( [ (pi,sigma) for pi in P for sigma in P if \
+      Type(u,pi) == la and Type(u,sigma) == mu and P.meet(pi, sigma) == P.bottom() ] ) * m[la] \
+      for la in VectorPartitions(u))
+
+## Given a vector partition mu, expand f[mu] in the monomial basis
+
+def FtoM(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    return Factorial(u) / Choose(u,mu) / Bar(mu) * \
+      sum( 1 / Choose(u, la) / Factorial(la) * \
+        sum(Factorial(SPLambda(sigma, pi)) for pi in P for sigma in P if \
+          Type(u,pi) == la and Type(u,sigma) == mu and pi in sigma.coarsenings()) \
+        * m[la] for la in VectorPartitions(u))
+
