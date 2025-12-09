@@ -2,62 +2,63 @@
 \newcommand{\Mac}{\mathfrak{M}}
 \DeclareMathOperator{\type}{type}
 \begin{document}
-\section{Expanding a power-sum MacMahon symmetric function in the monomial basis}
-\bigskip
+%\section{Expanding a power-sum MacMahon symmetric function in the monomial basis}
+%\bigskip
+%
+%Fix a positive integer $r$.  Throughout, we will work with MacMahon symmetric functions in $r$ alphabets.  The complete set of variables is
+%\[\{x_{i,j}\mid i\in\Pp,\ j\in[r]\}.\]
+%
+%Fix vector partitions $\lambda=(\lambda_1,\dots,\lambda_\ell)$ and $\mu=(\mu_1,\dots,\mu_m)$ of the same vector, where
+%\begin{align*}
+%\lambda_i&=(\lambda_{i,1},\dots,\lambda_{i,r})\in\Pp^r\setminus\{\vec0\},\\
+%\mu_i&=(\mu_{i,1},\dots,\mu_{i,r})\in\Pp^r\setminus\{\vec0\}.
+%\end{align*}
+%
+%The monomial MacMahon symmetric function indexed by $\mu$ is the sum of all monomials in the diagonal $\mathfrak{S}_n$-orbit of the monomial
+%\[x_\mu = \prod_{i=1}^m \prod_{j=1}^r x_{i,j}^{\mu_{i,j}}.\]
+%
+%The power-sum MacMahon symmetric function indexed by $\lambda$ is
+%\begin{align*}
+%P_\lambda
+%&= \prod_{i=1}^\ell P_{\lambda_i}\\
+%&= \prod_{i=1}^\ell \sum_{k\in\Pp} x_{k,1}^{\lambda_{i,1}}\cdots x_{k,r}^{\lambda_{i,r}}\\
+%&= \sum_{(k_1,\dots,k_\ell)\in\Pp^\ell} \prod_{i=1}^\ell x_{k_i,1}^{\lambda_{i,1}}\cdots x_{k_i,r}^{\lambda_{i,r}}.
+%\end{align*}
+%
+%Thus the coefficient of $x_\mu$ in $P_\lambda$ is
+%\[\#\left\{(k_1,\dots,k_\ell)\in\Pp^\ell \mid \sum_{i\colon\,k_i=h}\lambda_i=\mu_h\ \ \forall h\in[m]\right\}.\]
+%Note that we can replace $\Pp^\ell$ by $m^\ell$.
+%
+%For example, fix $r=2$.  Let $\mu=(1,1)(1,2)$, so that
+%\[x_\mu = x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2\]
+%and let $\lambda=(1,1)(1,0)(0,1)(0,1)$ so that $\ell=4$ and
+%\begin{align*}
+%P_\lambda
+%&= \sum_{(k_1,\dots,k_4)} \prod_{i=1}^4 x_{k_i,1}^{\lambda_{i,1}} x_{k_i,2}^{\lambda_{i,2}}\\
+%&= \sum_{(k_1,\dots,k_4)} 
+%x_{k_1,1}^{\lambda_{1,1}} x_{k_1,2}^{\lambda_{1,2}}
+%x_{k_2,2}^{\lambda_{2,1}} x_{k_2,2}^{\lambda_{2,2}}
+%x_{k_3,1}^{\lambda_{3,1}} x_{k_3,2}^{\lambda_{3,2}}
+%x_{k_4,1}^{\lambda_{4,1}} x_{k_4,2}^{\lambda_{4,2}}\\
+%&= \sum_{(k_1,\dots,k_4)} 
+%x_{k_1,1}^1 x_{k_1,2}^1
+%x_{k_2,2}^1 x_{k_2,2}^0
+%x_{k_3,1}^0 x_{k_3,2}^1
+%x_{k_4,1}^0 x_{k_4,2}^1
+%\end{align*}
+%so in order to make this monomial equal to $x_\mu$, we need
+%\[\sum_{i:\ k_i=1} \lambda_i = \mu_1 = (1,1),
+%\qquad\sum_{i:\ k_i=2} \lambda_i = \mu_2 = (1,2).\]
+%The solutions for $(k_1,k_2,k_3,k_4)$ and the corresponding expressions for $x_\mu$ are
+%\begin{align*}
+%(1,2,2,2) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{1,1}^1 x_{1,2}^1)(x_{2,2}^1 x_{2,2}^0)(x_{2,1}^0 x_{2,2}^1)(x_{2,1}^0 x_{2,2}^1)\\
+%(2,1,1,2) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{2,1}^1 x_{2,2}^1)(x_{1,2}^1 x_{1,2}^0)(x_{1,1}^0 x_{1,2}^1)(x_{2,1}^0 x_{2,2}^1)\\
+%(2,1,2,1) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{2,1}^1 x_{2,2}^1)(x_{1,2}^1 x_{1,2}^0)(x_{2,1}^0 x_{2,2}^1)(x_{1,1}^0 x_{1,2}^1)\\
+%\end{align*}
+%So the coefficient is 3.  This could certainly be calculated algorithmically.
+%
 
-Fix a positive integer $r$.  Throughout, we will work with MacMahon symmetric functions in $r$ alphabets.  The complete set of variables is
-\[\{x_{i,j}\mid i\in\Pp,\ j\in[r]\}.\]
-
-Fix vector partitions $\lambda=(\lambda_1,\dots,\lambda_\ell)$ and $\mu=(\mu_1,\dots,\mu_m)$ of the same vector, where
-\begin{align*}
-\lambda_i&=(\lambda_{i,1},\dots,\lambda_{i,r})\in\Pp^r\setminus\{\vec0\},\\
-\mu_i&=(\mu_{i,1},\dots,\mu_{i,r})\in\Pp^r\setminus\{\vec0\}.
-\end{align*}
-
-The monomial MacMahon symmetric function indexed by $\mu$ is the sum of all monomials in the diagonal $\mathfrak{S}_n$-orbit of the monomial
-\[x_\mu = \prod_{i=1}^m \prod_{j=1}^r x_{i,j}^{\mu_{i,j}}.\]
-
-The power-sum MacMahon symmetric function indexed by $\lambda$ is
-\begin{align*}
-P_\lambda
-&= \prod_{i=1}^\ell P_{\lambda_i}\\
-&= \prod_{i=1}^\ell \sum_{k\in\Pp} x_{k,1}^{\lambda_{i,1}}\cdots x_{k,r}^{\lambda_{i,r}}\\
-&= \sum_{(k_1,\dots,k_\ell)\in\Pp^\ell} \prod_{i=1}^\ell x_{k_i,1}^{\lambda_{i,1}}\cdots x_{k_i,r}^{\lambda_{i,r}}.
-\end{align*}
-
-Thus the coefficient of $x_\mu$ in $P_\lambda$ is
-\[\#\left\{(k_1,\dots,k_\ell)\in\Pp^\ell \mid \sum_{i\colon\,k_i=h}\lambda_i=\mu_h\ \ \forall h\in[m]\right\}.\]
-Note that we can replace $\Pp^\ell$ by $m^\ell$.
-
-For example, fix $r=2$.  Let $\mu=(1,1)(1,2)$, so that
-\[x_\mu = x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2\]
-and let $\lambda=(1,1)(1,0)(0,1)(0,1)$ so that $\ell=4$ and
-\begin{align*}
-P_\lambda
-&= \sum_{(k_1,\dots,k_4)} \prod_{i=1}^4 x_{k_i,1}^{\lambda_{i,1}} x_{k_i,2}^{\lambda_{i,2}}\\
-&= \sum_{(k_1,\dots,k_4)} 
-x_{k_1,1}^{\lambda_{1,1}} x_{k_1,2}^{\lambda_{1,2}}
-x_{k_2,2}^{\lambda_{2,1}} x_{k_2,2}^{\lambda_{2,2}}
-x_{k_3,1}^{\lambda_{3,1}} x_{k_3,2}^{\lambda_{3,2}}
-x_{k_4,1}^{\lambda_{4,1}} x_{k_4,2}^{\lambda_{4,2}}\\
-&= \sum_{(k_1,\dots,k_4)} 
-x_{k_1,1}^1 x_{k_1,2}^1
-x_{k_2,2}^1 x_{k_2,2}^0
-x_{k_3,1}^0 x_{k_3,2}^1
-x_{k_4,1}^0 x_{k_4,2}^1
-\end{align*}
-so in order to make this monomial equal to $x_\mu$, we need
-\[\sum_{i:\ k_i=1} \lambda_i = \mu_1 = (1,1),
-\qquad\sum_{i:\ k_i=2} \lambda_i = \mu_2 = (1,2).\]
-The solutions for $(k_1,k_2,k_3,k_4)$ and the corresponding expressions for $x_\mu$ are
-\begin{align*}
-(1,2,2,2) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{1,1}^1 x_{1,2}^1)(x_{2,2}^1 x_{2,2}^0)(x_{2,1}^0 x_{2,2}^1)(x_{2,1}^0 x_{2,2}^1)\\
-(2,1,1,2) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{2,1}^1 x_{2,2}^1)(x_{1,2}^1 x_{1,2}^0)(x_{1,1}^0 x_{1,2}^1)(x_{2,1}^0 x_{2,2}^1)\\
-(2,1,2,1) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{2,1}^1 x_{2,2}^1)(x_{1,2}^1 x_{1,2}^0)(x_{2,1}^0 x_{2,2}^1)(x_{1,1}^0 x_{1,2}^1)\\
-\end{align*}
-So the coefficient is 3.  This could certainly be calculated algorithmically.
-
-\section{Transitions between bases, from Rosas 2001}
+\section{Transitions between bases [Rosas 2001]}
 
 First, a standard linear algebra fact.
 Let $V$ be a vector space of finite dimension~$n$ over ground field $\Bbbk$ (it doesn't matter what it is).
@@ -143,7 +144,7 @@ F = \sum_{\lambda\partn\uu} \langle m_\lambda,\,F\rangle\, h_\lambda,
 \qquad\qquad
 F = \sum_{\lambda\partn\uu} \langle h_\lambda,\,F\rangle\, m_\lambda.
 \end{equation}
-Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions (which requires things like lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$).  Therefore, we should be able to compute scalar products, and thus basis expansions, for all MacMahon functions.
+Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions (which requires things like lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$).  Therefore, we should be able to compute scalar products, and thus basis expansions, for all MacMahon functions.  Rosas reproduced Doubilet's calculations (in modern notation).
 
 \section{Expansions in the $m$-basis}
 
@@ -267,6 +268,57 @@ f_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(f_
     \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
     \sum_{\tau\geq\sigma\join\pi} \frac{|\mu(\sigma,\tau)|\cdot\mu(\pi,\tau)}{\mu(\hatzero,\tau)}\, h_\lambda
 	&&\text{(by Doubilet formula \#11)}\\
+\end{align*}
+
+\section{Expansions in the $p$-basis}
+
+The power-sum basis is orthogonal (though not orthonormal).  A remark in Rosas (p.333) says that for $\lambda\partn\uu$,
+\begin{equation}
+\langle p_\lambda,\,p_\mu \rangle = \frac{\delta_{\lambda,\mu}|\lambda|\,\lambda!}{\mu(\hatzero,\lambda)}
+\end{equation}
+where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\pi$ such that $\type_u(\pi)=\lambda$.
+
+Therefore, Proposition~\ref{expansion} says that for every $F\in\Mac$,
+\begin{equation} \label{expand-in-P-basis}
+F = \sum_\lambda \frac{\langle p_\lambda,\,F\rangle \mu(\hatzero,\lambda)}{|\lambda|\,\lambda!} p_\lambda
+= \sum_\lambda \frac{\langle p_\lambda,\,F\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda}}{\uu!} p_\lambda
+\end{equation}
+So, as before:
+
+\begin{align*}
+m_\mu &= \sum_\lambda \left\langle \binom{\uu}{\lambda}\hat\rho(p_\lambda),\,\hat\rho(m_\mu)\right\rangle \mu(\hatzero,\lambda)  p_\lambda
+	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, m_\pi\right\rangle  p_\lambda
+	&&\text{(by~\eqref{liftP} and~\eqref{liftM} and bilinearity)}\\
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \pi\leq\sigma}} \frac{\mu(\pi,\sigma)}{\mu(\hatzero,\sigma)} \right] p_\lambda
+	&&\text{(by Doubilet formula \#10)}\\
+\end{align*}
+
+\begin{align*}
+h_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(h_\mu)\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda} p_\lambda
+	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, h_\pi\right\rangle  p_\lambda
+	&&\text{(by~\eqref{liftP} and~\eqref{liftH} and bilinearity)}\\
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \sigma\leq\pi}} \right] p_\lambda
+	&&\text{(by Doubilet formula \#3)}\\
+\end{align*}
+
+\begin{align*}
+e_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(e_\mu)\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda} p_\lambda
+	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, e_\pi\right\rangle  p_\lambda
+	&&\text{(by~\eqref{liftP} and~\eqref{liftE} and bilinearity)}\\
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \sigma\leq\pi}} \sign(\sigma) \right] p_\lambda
+	&&\text{(by Doubilet formula \#4)}\\
+\end{align*}
+
+\begin{align*}
+f_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(f_\mu)\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda} p_\lambda
+	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, f_\pi\right\rangle  p_\lambda
+	&&\text{(by~\eqref{liftP} and~\eqref{liftF} and bilinearity)}\\
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \pi\leq\sigma}}\sign(\pi)\sign(\sigma)\frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|} \right] p_\lambda
+	&&\text{(by Doubilet formula \#14)}\\
 \end{align*}
 
 \end{document}

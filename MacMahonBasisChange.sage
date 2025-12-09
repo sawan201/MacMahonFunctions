@@ -275,12 +275,12 @@ EFProduct = lambda pi, sigma: FEProduct(sigma, pi)
 ################################################################################
 ##
 ##  Actual basis change formulas
+##  General format: XtoY[mu] expands the standard basis element X[mu] in the Y-basis,
+##  where mu is a vector partition
 ##
 ################################################################################
 ################################################################################
 ################################################################################
-
-## Given a vector partition mu, expand p[mu] in the monomial basis
 
 def PtoM(mu):
     u = sum(mu)
@@ -291,8 +291,6 @@ def PtoM(mu):
       Type(u,pi) == la and Type(u,sigma) == mu and pi in sigma.coarsenings()]) * m[la] \
       for la in VectorPartitions(u))
 
-## Given a vector partition mu, expand h[mu] in the monomial basis
-
 def HtoM(mu):
     u = sum(mu)
     n = sum(u)
@@ -302,8 +300,6 @@ def HtoM(mu):
       for sigma in P for pi in P if Type(u,pi) == la and Type(u,sigma) == mu) * m[la] \
       for la in VectorPartitions(u))
 
-## Given a vector partition mu, expand e[mu] in the monomial basis
-
 def EtoM(mu):
     u = sum(mu)
     n = sum(u)
@@ -312,8 +308,6 @@ def EtoM(mu):
       sum( 1 / Choose(u, la) / Factorial(la) * len( [ (pi,sigma) for pi in P for sigma in P if \
       Type(u,pi) == la and Type(u,sigma) == mu and P.meet(pi, sigma) == P.bottom() ] ) * m[la] \
       for la in VectorPartitions(u))
-
-## Given a vector partition mu, expand f[mu] in the monomial basis
 
 def FtoM(mu):
     u = sum(mu)
@@ -373,6 +367,20 @@ def FtoH(mu):
     sum( 1 / Choose(u, la) / Bars(la) * \
         sum( \
             sum( abs(Mu(sigma,tau))*Mu(pi,tau)/Mu(Ze,tau) \
+            for tau in P.join(pi, sigma).coarsenings() ) \
+        for pi in P for sigma in P if Type(u,pi) == la and Type(u,sigma) == mu) \
+    * h[la] for la in VectorPartitions(u))
+
+def MtoP(mu):
+    u = sum(mu)
+    n = sum(u)
+    P = posets.SetPartitions(n)
+    Mu = P.moebius_function
+    Ze = P.bottom()
+    return 1 / Choose(u,mu) / Bars(mu) * \
+    sum( Mu(Ze,la) * \
+        sum( \
+            sum( Mu(pi,tau)/Mu(Ze,tau) \
             for tau in P.join(pi, sigma).coarsenings() ) \
         for pi in P for sigma in P if Type(u,pi) == la and Type(u,sigma) == mu) \
     * h[la] for la in VectorPartitions(u))
