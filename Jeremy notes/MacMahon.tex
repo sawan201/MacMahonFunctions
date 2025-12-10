@@ -106,8 +106,8 @@ The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a 
  the number of elements of $B_k$ such that
 in the $i$th equivalence class.
 
-For a vector $u$ of weight $n$ and a vector partition $\lambda$ of weight $n$, the number of set partitions $\pi$ of type $\type_\uu(\pi)$ is
-\[\binom{u}{\lambda} := \frac{u!}{\lambda!\,|\lambda|}.\]
+For a vector $\uu$ of weight $n$ and a vector partition $\lambda$ of weight $n$, the number of set partitions $\pi$ of type $\type_\uu(\pi)$ is
+\[\binom{\uu}{\lambda} := \frac{\uu!}{\lambda!\,|\lambda|}.\]
 
 Define a scalar product on $\Mac$:
 \begin{equation}\label{scalar-product}
@@ -161,8 +161,8 @@ p_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(h_\lambda),\,\hat\rho(p_
     \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
     \zeta(\sigma,\pi) m_\lambda
 	&&\text{(by~Doubilet formula \#3)}\\
-p_\mu &= \boxed{ \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \sigma\leq\pi\}}{\binom{\uu}{\lambda}\lambda!}
-    m_\lambda}
+p_\mu &=  \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \sigma\leq\pi\}}{\binom{\uu}{\lambda}\lambda!}
+    m_\lambda
 \end{align*}
 
 \begin{align*}
@@ -319,6 +319,63 @@ f_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(f_\mu)\rangle \mu(\
 	&&\text{(by~\eqref{liftP} and~\eqref{liftF} and bilinearity)}\\
 &= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \pi\leq\sigma}}\sign(\pi)\sign(\sigma)\frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|} \right] p_\lambda
 	&&\text{(by Doubilet formula \#14)}\\
+\end{align*}
+
+\section{The omega involution, and expansions in the $e$- and $f$-bases}
+
+There is an automorphism $\omega\colon\Mac\to\Mac$ satisfying $\omega^2=\Id$.  Rosas states that
+\[\omega(e_\lambda) = h_\lambda\]
+(that is the definition), and that
+\[\omega(m_\lambda) = \sign(\lambda) f_\lambda.\]
+I would like to know what $\omega$ does to $p_\lambda$.  For symmetric functions, we have $\omega(p_\lambda)=\sign(\lambda) p_\lambda$ (where $\lambda$ is a partition), and for unitary MacMahon functions, we have $\omega(p_\pi)=\sign(\pi) p_\pi$ (where $\pi$ is a set partition).  It would be natural to hope that $\omega(p_\lambda)=\sign(\lambda) p_\lambda$ in general, though Rosas does not state that.  Can we prove it?  And can we prove that $\omega$ is an isometry?
+
+Or should we just assume all of these things?  If so, then applying $\omega$ to the conversions to the $h$-basis gives
+
+\begin{align*}
+f_\mu &= \sign(\mu) \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \sum_{\tau\geq\pi\join\sigma} \frac{\mu(\pi,\tau)\mu(\sigma,\tau)}{\mu(\hatzero,\tau)}\, e_\lambda
+\end{align*}
+
+\begin{align*}
+p_\mu &= \sign(\mu) \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \pi\leq\sigma}}
+    \frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|}\, e_\lambda
+\end{align*}
+
+\begin{align*}
+h_\mu &= \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \pi\leq\sigma}}
+    \sign(\pi) \lambda(\pi,\sigma)!\, e_\lambda
+\end{align*}
+
+\begin{align*}
+m_\mu &= \sign(\mu) \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \sum_{\tau\geq\sigma\join\pi} \frac{|\mu(\sigma,\tau)|\cdot\mu(\pi,\tau)}{\mu(\hatzero,\tau)}\, e_\lambda
+\end{align*}
+
+and likewise applying $\omega$ to the conversions to the $m$-basis gives
+
+\begin{align*}
+p_\mu &= \sign(\mu)  \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \sigma\leq\pi\}}{\binom{\uu}{\lambda}\lambda!}
+    f_\lambda
+\end{align*}
+
+\begin{align*}
+e_\mu &= \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{1}{\binom{\uu}{\lambda}\lambda!}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+    \lambda(\sigma\meet\pi)!\, f_\lambda
+\end{align*}
+
+\begin{align*}
+h_\mu &=  \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \pi\meet\sigma=\hatzero\}}{\binom{\uu}{\lambda}\lambda!} f_\lambda
+\end{align*}
+
+\begin{align*}
+m_\mu &= \sign(\mu)  \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{1}{\binom{\uu}{\lambda}\lambda!}
+    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \sigma\leq\pi}}
+    \lambda(\sigma,\pi)!  f_\lambda
 \end{align*}
 
 \end{document}
