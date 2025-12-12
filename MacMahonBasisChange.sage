@@ -378,7 +378,7 @@ def MtoP(mu):
     Mu = P.moebius_function
     Ze = P.bottom()
     return 1 / Choose(u,mu) / Bars(mu) * \
-    sum( Mu(Ze,la) * \
+    sum( abs(Mu(Ze,la)) * \
         sum( Mu(pi,sigma) / abs(Mu(Ze,sigma)) \
         for pi in P for sigma in P if Type(u,sigma) == la and Type(u,pi) == mu and sigma in pi.coarsenings()) \
     * p[la] for la in VectorPartitions(u))
@@ -390,7 +390,7 @@ def HtoP(mu):
     Mu = P.moebius_function
     Ze = P.bottom()
     return 1 / Choose(u,mu) / Factorial(mu) * \
-    sum( Mu(Ze,la) * \
+    sum( abs(Mu(Ze,la)) * \
         len([(sigma, pi) for pi in P for sigma in P if Type(u,sigma) == la and Type(u,pi) == mu and pi in sigma.coarsenings()]) \
     * p[la] for la in VectorPartitions(u))
 
@@ -401,7 +401,7 @@ def EtoP(mu):
     Mu = P.moebius_function
     Ze = P.bottom()
     return 1 / Choose(u,mu) / Factorial(mu) * \
-    sum( Mu(Ze,la) * \
+    sum( abs(Mu(Ze,la)) * \
         sum( sigma.to_partition().sign() for pi in P for sigma in P if Type(u,sigma) == la and Type(u,pi) == mu and pi in sigma.coarsenings()) \
     * p[la] for la in VectorPartitions(u))
 
@@ -412,7 +412,7 @@ def FtoP(mu):
     Mu = P.moebius_function
     Ze = P.bottom()
     return 1 / Choose(u,mu) / Bars(mu) * \
-    sum( Mu(Ze,la) * \
+    sum( abs(Mu(Ze,la)) * \
         sum( sigma.to_partition().sign() * pi.to_partition().sign() * Mu(pi, sigma) * abs(Mu(Ze,sigma)) \
         for pi in P for sigma in P if Type(u,sigma) == la and Type(u,pi) == mu and sigma in pi.coarsenings()) \
     * p[la] for la in VectorPartitions(u))

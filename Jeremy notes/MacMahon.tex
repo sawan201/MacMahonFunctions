@@ -3,6 +3,30 @@
 \DeclareMathOperator{\type}{type}
 \begin{document}
 
+Let $\Nn$ denote the nonnegative integers and $\Pp$ the positive integers.
+Fix $m\in\Pp$ and let $\mathcal{A}=\{x_{i,j} \mid i\in[r],\ j\in\Pp\}$.
+Everything that follows takes place in the ring of formal power series $R=\fld[[\mathcal{A}]]$, where $\fld$ is a field (assumed to be of characteristic~0 if necessary).  There is an $\Nn^r$-grading on $R$; the homogeneous component of degree $\uu=(u_1,\dots,u_r)\in\Nn^r$ is the vector space span of monomials having total degree $u_i$ in the variables $\{x_{i,j}\mid j\in\Pp\}$.
+
+The group $\Sym$ of permutations of $\Pp$ acts diagonally on $\mathcal{A}$ by $\sigma(x_{i,j})=x_{i,\sigma(j)}$; this action extends to $R$.  The invariants of the action are the \textbf{MacMahon (symmetric) functions}.  They form a graded subring $\Mac\subseteq R$, with $\Mac_\uu=\Mac\cap R_\uu$.
+
+Following Rosas \cite{Rosas}, the standard combinatorial bases for $\Mac$ are as follows.  For $\uu\in\Nn^r$, each basis for $\Mac_\uu$ is indexed by the \textbf{vector partitions} $\lambda\partn\uu$. Such a thing is a multiset of nonzero vectors $\lambda^{(1)},\dots,\lambda^{(k)}\in\Nn^r$ that sum to $\uu$.
+
+Let $\lambda=\{\lambda^{(1)},\dots,\lambda^{(k)}\}$ be a vector partition, where $\lambda^{(j)}=(\ell_{1,j},\dots,\ell_{r,j})$.
+The \textbf{monomial MacMahon function} $m_\lambda$ is the sum of all monomials in the $\Sym$-orbit of the monomial
+\[\prod_{j=1}^k \prod_{i=1}^r x_{i,j}^{\ell_{i,j}}.\]
+For $\aa=(a_1,\dots,a_r)\in\Nn^r$, the \textbf{power-sum MacMahon function} is
+\[p_\aa = \sum_{i=1}^\infty x_{1,i}^{a_1} x_{2,i}^{a_2} \cdots x_{r,i}^{a_r};\]
+the \textbf{elementary MacMahon function} is
+\[e_\aa = [t_1^{a_1}\cdots t_r^{a_r}] \prod_{i=1}^\infty 1+t_1x_{1,i}+t_2x_{2,i}+\cdots+t_rx_{r,i}\]
+and the \textbf{complete homogeneous MacMahon function} is
+\[h_\aa = [t_1^{a_1}\cdots t_r^{a_r}] \prod_{i=1}^\infty \frac{1}{1-t_1x_{1,i}-t_2x_{2,i}-\cdots-t_rx_{r,i}}.\]
+These are all multiplicative bases:  for a vector partition $\lambda=\{\lambda^{(1)},\dots,\lambda^{(k)}\}$ we set
+\[p_\lambda = \prod_{j=1}^k p_{\lambda^{(j)}},\qquad
+e_\lambda = \prod_{j=1}^k e_{\lambda^{(j)}},\qquad
+h_\lambda = \prod_{j=1}^k h_{\lambda^{(j)}}.\]
+Finally, there is an involutive automorphism $\omega\colon\Mac\to\Mac$ defined by $\omega(e_\lambda)=h_\lambda$.
+The \textbf{forgotten MacMahon functions} are defined by $f_\lambda=\sign(\lambda)m_\lambda$.
+
 \section{Transitions between bases}
 
 First, a standard linear algebra fact.
@@ -34,8 +58,8 @@ This proposition reduces the problem of expanding a vector in a particular basis
 
 Notation:
 \begin{itemize}
-\item $\Nn$ = nonnegative integers;
-\item For $u\in\Nn^k$, a \textbf{vector partition} $\lambda\partn u$ is an unordered sequence of vectors (\textbf{parts}) summing to $u$; zero vectors can be ignored.
+\item $\Nn$ = nonnegative integers
+\item For $\uu\in\Nn^k$, a \textbf{vector partition} $\lambda\partn\uu$ is a multiset of nonzero vectors (the \textbf{parts} of $\lambda$) that sum to $u$.
 \item Weight of a vector partition = sum of all entries in all vectors in it (ex.: $\wt(\{120,100,100,013\})=9$)
 \item $\Mac_\uu$ = MacMahon symmetric functions of homogeneous multidegree $u$
 \item $\sign(\lambda)=(-1)^{\text{number of parts with even sum}}$
@@ -46,7 +70,7 @@ Notation:
 
 A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.  Unitary MacMahon symmetric functions are the focus of \cite{Doubilet}.  These are the graded pieces $\Mac_{(1)^k}$.
 
-The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $u=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_\uu(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
+The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $\uu=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_\uu(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
 \[\#\{j\in B_k \mid u_1+\cdots+u_{i-1} < j \leq i_1+\cdots+u_i\}.\]
  the number of elements of $B_k$ such that
 in the $i$th equivalence class.
@@ -216,11 +240,11 @@ f_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(f_
 
 \section{Expansions in the $p$-basis}
 
-The power-sum basis is orthogonal (though not orthonormal).  I would like to verify this, since it is not evident from going through the lifting map. A remark in Rosas \cite[p.333]{Rosas} says that for $\lambda\partn\uu$,
+Rosas \cite[p.333]{Rosas} states that for $\lambda\partn\uu$,
 \begin{equation}
 \langle p_\lambda,\,p_\mu \rangle = \frac{\delta_{\lambda,\mu}|\lambda|\,\lambda!}{|\mu(\hatzero,\lambda)|}
 \end{equation}
-where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\pi$ such that $\type_u(\pi)=\lambda$.x1
+where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\pi$ such that $\type_u(\pi)=\lambda$.  This can be verified using the lifting maps and Doubilet's formula.
 % Verification:
 %\begin{align*}
 %\scp{p_\lambda}{p_\mu}
@@ -241,44 +265,44 @@ where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\
 
 Therefore, Proposition~\ref{expansion} says that for every $F\in\Mac$,
 \begin{equation} \label{expand-in-P-basis}
-F = \sum_\lambda \frac{\langle p_\lambda,\,F\rangle \mu(\hatzero,\lambda)}{|\lambda|\,\lambda!} p_\lambda
-= \sum_\lambda \frac{\langle p_\lambda,\,F\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda}}{\uu!} p_\lambda
+F = \sum_\lambda \frac{\langle p_\lambda,\,F\rangle |\mu(\hatzero,\lambda)|}{|\lambda|\,\lambda!} p_\lambda
+= \sum_\lambda \frac{\langle p_\lambda,\,F\rangle |\mu(\hatzero,\lambda)| \binom{\uu}{\lambda}}{\uu!} p_\lambda
 \end{equation}
 So, as before:
 
 \begin{align*}
-m_\mu &= \sum_\lambda \left\langle \binom{\uu}{\lambda}\hat\rho(p_\lambda),\,\hat\rho(m_\mu)\right\rangle \mu(\hatzero,\lambda)  p_\lambda
+m_\mu &= \sum_\lambda \left\langle \binom{\uu}{\lambda}\hat\rho(p_\lambda),\,\hat\rho(m_\mu)\right\rangle |\mu(\hatzero,\lambda)|  p_\lambda
 	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
-&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, m_\pi\right\rangle  p_\lambda
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, m_\pi\right\rangle  p_\lambda
 	&&\text{(by~\eqref{liftP} and~\eqref{liftM} and bilinearity)}\\
-&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \pi\leq\sigma}} \frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|} \right] p_\lambda
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda\left[ |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \pi\leq\sigma}} \frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|} \right] p_\lambda
 	&&\text{(by Doubilet formula \#10)}\\
 \end{align*}
 
 \begin{align*}
-h_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(h_\mu)\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda} p_\lambda
+h_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(h_\mu)\rangle |\mu(\hatzero,\lambda)| \binom{\uu}{\lambda} p_\lambda
 	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
-&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, h_\pi\right\rangle  p_\lambda
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, h_\pi\right\rangle  p_\lambda
 	&&\text{(by~\eqref{liftP} and~\eqref{liftH} and bilinearity)}\\
-&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \sigma\leq\pi}} \right] p_\lambda
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda\left[ |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \sigma\leq\pi}} \right] p_\lambda
 	&&\text{(by Doubilet formula \#3)}\\
 \end{align*}
 
 \begin{align*}
-e_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(e_\mu)\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda} p_\lambda
+e_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(e_\mu)\rangle |\mu(\hatzero,\lambda)| \binom{\uu}{\lambda} p_\lambda
 	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
-&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, e_\pi\right\rangle  p_\lambda
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, e_\pi\right\rangle  p_\lambda
 	&&\text{(by~\eqref{liftP} and~\eqref{liftE} and bilinearity)}\\
-&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \sigma\leq\pi}} \sign(\sigma) \right] p_\lambda
+&= \frac{1}{\binom{\uu}{\mu} \mu!} \sum_\lambda\left[ |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \sigma\leq\pi}} \sign(\sigma) \right] p_\lambda
 	&&\text{(by Doubilet formula \#4)}\\
 \end{align*}
 
 \begin{align*}
-f_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(f_\mu)\rangle \mu(\hatzero,\lambda) \binom{\uu}{\lambda} p_\lambda
+f_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(f_\mu)\rangle |\mu(\hatzero,\lambda)| \binom{\uu}{\lambda} p_\lambda
 	&&\text{(by~\eqref{expand-in-P-basis} and~\eqref{Rosas-scalar})}\\
-&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, f_\pi\right\rangle  p_\lambda
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu}} \left\langle p_\sigma,\, f_\pi\right\rangle  p_\lambda
 	&&\text{(by~\eqref{liftP} and~\eqref{liftF} and bilinearity)}\\
-&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda\left[ \mu(\hatzero,\lambda) \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \pi\leq\sigma}}\sign(\pi)\sign(\sigma)\frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|} \right] p_\lambda
+&= \frac{1}{\binom{\uu}{\mu}|\mu|} \sum_\lambda\left[ |\mu(\hatzero,\lambda)| \sum_{\substack{\sigma\colon \type_\uu(\sigma)=\lambda\\ \pi\colon \type_\uu(\pi)=\mu\\ \pi\leq\sigma}}\sign(\pi)\sign(\sigma)\frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|} \right] p_\lambda
 	&&\text{(by Doubilet formula \#14)}\\
 \end{align*}
 
