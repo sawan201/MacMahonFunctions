@@ -417,3 +417,8 @@ def FtoP(mu):
         for pi in P for sigma in P if Type(u,sigma) == la and Type(u,pi) == mu and sigma in pi.coarsenings()) \
     * p[la] for la in VectorPartitions(u))
 
+## The conversions to the e- and f-bases are almost identical
+## to the conversions to the h- and m-bases respectively,
+## exploiting the omega involution (which has to be implemented at some point!)
+
+

@@ -2,63 +2,8 @@
 \newcommand{\Mac}{\mathfrak{M}}
 \DeclareMathOperator{\type}{type}
 \begin{document}
-%\section{Expanding a power-sum MacMahon symmetric function in the monomial basis}
-%\bigskip
-%
-%Fix a positive integer $r$.  Throughout, we will work with MacMahon symmetric functions in $r$ alphabets.  The complete set of variables is
-%\[\{x_{i,j}\mid i\in\Pp,\ j\in[r]\}.\]
-%
-%Fix vector partitions $\lambda=(\lambda_1,\dots,\lambda_\ell)$ and $\mu=(\mu_1,\dots,\mu_m)$ of the same vector, where
-%\begin{align*}
-%\lambda_i&=(\lambda_{i,1},\dots,\lambda_{i,r})\in\Pp^r\setminus\{\vec0\},\\
-%\mu_i&=(\mu_{i,1},\dots,\mu_{i,r})\in\Pp^r\setminus\{\vec0\}.
-%\end{align*}
-%
-%The monomial MacMahon symmetric function indexed by $\mu$ is the sum of all monomials in the diagonal $\mathfrak{S}_n$-orbit of the monomial
-%\[x_\mu = \prod_{i=1}^m \prod_{j=1}^r x_{i,j}^{\mu_{i,j}}.\]
-%
-%The power-sum MacMahon symmetric function indexed by $\lambda$ is
-%\begin{align*}
-%P_\lambda
-%&= \prod_{i=1}^\ell P_{\lambda_i}\\
-%&= \prod_{i=1}^\ell \sum_{k\in\Pp} x_{k,1}^{\lambda_{i,1}}\cdots x_{k,r}^{\lambda_{i,r}}\\
-%&= \sum_{(k_1,\dots,k_\ell)\in\Pp^\ell} \prod_{i=1}^\ell x_{k_i,1}^{\lambda_{i,1}}\cdots x_{k_i,r}^{\lambda_{i,r}}.
-%\end{align*}
-%
-%Thus the coefficient of $x_\mu$ in $P_\lambda$ is
-%\[\#\left\{(k_1,\dots,k_\ell)\in\Pp^\ell \mid \sum_{i\colon\,k_i=h}\lambda_i=\mu_h\ \ \forall h\in[m]\right\}.\]
-%Note that we can replace $\Pp^\ell$ by $m^\ell$.
-%
-%For example, fix $r=2$.  Let $\mu=(1,1)(1,2)$, so that
-%\[x_\mu = x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2\]
-%and let $\lambda=(1,1)(1,0)(0,1)(0,1)$ so that $\ell=4$ and
-%\begin{align*}
-%P_\lambda
-%&= \sum_{(k_1,\dots,k_4)} \prod_{i=1}^4 x_{k_i,1}^{\lambda_{i,1}} x_{k_i,2}^{\lambda_{i,2}}\\
-%&= \sum_{(k_1,\dots,k_4)} 
-%x_{k_1,1}^{\lambda_{1,1}} x_{k_1,2}^{\lambda_{1,2}}
-%x_{k_2,2}^{\lambda_{2,1}} x_{k_2,2}^{\lambda_{2,2}}
-%x_{k_3,1}^{\lambda_{3,1}} x_{k_3,2}^{\lambda_{3,2}}
-%x_{k_4,1}^{\lambda_{4,1}} x_{k_4,2}^{\lambda_{4,2}}\\
-%&= \sum_{(k_1,\dots,k_4)} 
-%x_{k_1,1}^1 x_{k_1,2}^1
-%x_{k_2,2}^1 x_{k_2,2}^0
-%x_{k_3,1}^0 x_{k_3,2}^1
-%x_{k_4,1}^0 x_{k_4,2}^1
-%\end{align*}
-%so in order to make this monomial equal to $x_\mu$, we need
-%\[\sum_{i:\ k_i=1} \lambda_i = \mu_1 = (1,1),
-%\qquad\sum_{i:\ k_i=2} \lambda_i = \mu_2 = (1,2).\]
-%The solutions for $(k_1,k_2,k_3,k_4)$ and the corresponding expressions for $x_\mu$ are
-%\begin{align*}
-%(1,2,2,2) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{1,1}^1 x_{1,2}^1)(x_{2,2}^1 x_{2,2}^0)(x_{2,1}^0 x_{2,2}^1)(x_{2,1}^0 x_{2,2}^1)\\
-%(2,1,1,2) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{2,1}^1 x_{2,2}^1)(x_{1,2}^1 x_{1,2}^0)(x_{1,1}^0 x_{1,2}^1)(x_{2,1}^0 x_{2,2}^1)\\
-%(2,1,2,1) & & x_{1,1}^1 x_{1,2}^1 x_{2,1}^1 x_{2,2}^2 &= (x_{2,1}^1 x_{2,2}^1)(x_{1,2}^1 x_{1,2}^0)(x_{2,1}^0 x_{2,2}^1)(x_{1,1}^0 x_{1,2}^1)\\
-%\end{align*}
-%So the coefficient is 3.  This could certainly be calculated algorithmically.
-%
 
-\section{Transitions between bases [Rosas 2001]}
+\section{Transitions between bases}
 
 First, a standard linear algebra fact.
 Let $V$ be a vector space of finite dimension~$n$ over ground field $\Bbbk$ (it doesn't matter what it is).
@@ -94,12 +39,12 @@ Notation:
 \item Weight of a vector partition = sum of all entries in all vectors in it (ex.: $\wt(\{120,100,100,013\})=9$)
 \item $\Mac_\uu$ = MacMahon symmetric functions of homogeneous multidegree $u$
 \item $\sign(\lambda)=(-1)^{\text{number of parts with even sum}}$
-\item $m_\lambda,e_\lambda,h_\lambda,p_\lambda,f_\lambda$: monomial, elementary, homogeneous, power-sum, and forgotten MacMahon symmetric functions (Rosas 327--328)
+\item $m_\lambda,e_\lambda,h_\lambda,p_\lambda,f_\lambda$: monomial, elementary, homogeneous, power-sum, and forgotten MacMahon symmetric functions \cite[pp.327--328]{Rosas}
 \item For a vector partition $\lambda$ in which each part $v_i$ occurs with multiplicity $m_i$, define
 \[|\lambda|=\prod_im_i! \qqandqq \lambda!=\prod_i\prod_{x\in v_i}(x!)^{m_i}.\]
 \end{itemize}
 
-A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.  There is a whole theory of MacMahon symmetric functions of unitary partitions, due to Doubilet.  These are the graded pieces $\Mac_{(1)^k}$.
+A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.  Unitary MacMahon symmetric functions are the focus of \cite{Doubilet}.  These are the graded pieces $\Mac_{(1)^k}$.
 
 The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $u=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_\uu(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
 \[\#\{j\in B_k \mid u_1+\cdots+u_{i-1} < j \leq i_1+\cdots+u_i\}.\]
@@ -121,7 +66,7 @@ F=\sum_{\lambda\partn u} \langle m_\lambda,\,F\rangle h_\lambda.
 
 Thus we have to know how to compute inner products.
 
-There is a ``lifting map'' $\hat\rho$ [Rosas 2001, Defn.~6] sending MacMahon functions to unitary (Doubilet) symmetric functions.  Specifically:
+There is a ``lifting map'' $\hat\rho$ \cite[Defn.~6]{Rosas} sending MacMahon functions to unitary (Doubilet) symmetric functions.  Specifically:
 \begin{subequations}
 \begin{align}
 \binom{\uu}{\lambda}|\lambda|\,m_\lambda &\overset{\hat\rho}{\longmapsto} \sum_{\pi\colon \type_\uu(\pi)=\lambda} m_\pi \label{liftM}\\
@@ -132,11 +77,10 @@ There is a ``lifting map'' $\hat\rho$ [Rosas 2001, Defn.~6] sending MacMahon fun
 \end{align}
 \end{subequations}
 
-Moreover, for all $f,g\in\Mac_\uu$ we have
+Moreover, for all $f,g\in\Mac_\uu$ we have \cite[Prop.~7]{Rosas}
 \begin{equation} \label{Rosas-scalar}
 \scp{f}{g}=\uu!\scp{\hat\rho(f)}{\hat\rho(g)}
 \end{equation}
-[Rosas, Prop.~7].
 
 Prop.~\ref{expansion} together with the scalar product~\eqref{scalar-product} says in particular that for $F\in\Mac_\uu$ we have
 \begin{equation} \label{expand-HM}
@@ -144,7 +88,7 @@ F = \sum_{\lambda\partn\uu} \langle m_\lambda,\,F\rangle\, h_\lambda,
 \qquad\qquad
 F = \sum_{\lambda\partn\uu} \langle h_\lambda,\,F\rangle\, m_\lambda.
 \end{equation}
-Doubilet (Appendix 2) calculated the scalar products for all five families of unitary symmetric functions (which requires things like lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$).  Therefore, we should be able to compute scalar products, and thus basis expansions, for all MacMahon functions.  Rosas reproduced Doubilet's calculations (in modern notation).
+Doubilet \cite[Appendix 2]{Doubilet} calculated the scalar products for all five families of unitary symmetric functions (which requires things like lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$).  Therefore, we should be able to compute scalar products, and thus basis expansions, for all MacMahon functions.  \Red{Warning:} Doubilet's notation for the standard bases is not the usual modern notation (he used $k,a,h,s,f$ for what we call $m,e,h,p,f$ --- perhaps this was not standardized in 1970?), and each of his formulas has an extra $n!$ that needs to be deleted (he was working in an analogous ring where the $n!$ makes sense.  Rosas reproduced Doubilet's calculations (in modern notation and without the $n!$'s that are extraneous in our context).
 
 \section{Expansions in the $m$-basis}
 
@@ -272,11 +216,28 @@ f_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(f_
 
 \section{Expansions in the $p$-basis}
 
-The power-sum basis is orthogonal (though not orthonormal).  A remark in Rosas (p.333) says that for $\lambda\partn\uu$,
+The power-sum basis is orthogonal (though not orthonormal).  I would like to verify this, since it is not evident from going through the lifting map. A remark in Rosas \cite[p.333]{Rosas} says that for $\lambda\partn\uu$,
 \begin{equation}
-\langle p_\lambda,\,p_\mu \rangle = \frac{\delta_{\lambda,\mu}|\lambda|\,\lambda!}{\mu(\hatzero,\lambda)}
+\langle p_\lambda,\,p_\mu \rangle = \frac{\delta_{\lambda,\mu}|\lambda|\,\lambda!}{|\mu(\hatzero,\lambda)|}
 \end{equation}
-where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\pi$ such that $\type_u(\pi)=\lambda$.
+where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\pi$ such that $\type_u(\pi)=\lambda$.x1
+% Verification:
+%\begin{align*}
+%\scp{p_\lambda}{p_\mu}
+%&= \uu!\scp{\hat\rho(p_\lambda)}{\hat\rho(p_\mu)}
+%	&&\text{(by~\eqref{Rosas-scalar})}\\
+%&=  \frac{\uu!}{\binom{\uu}{\lambda}\binom{\uu}{\mu}}   \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+% \scp{p_\pi}{p_\sigma}
+%	&&\text{(by~\eqref{liftP} and bilinearity)}\\
+%&=  \frac{\uu!}{\binom{\uu}{\lambda}\binom{\uu}{\mu}}   \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
+%\frac{\delta_{\pi,\sigma}}{|\mu(\hatzero,\pi)|}
+%	&&\text{(by Doubilet formula \#2)}
+%&= \frac{\delta_{\lambda,\mu} \uu!}{\binom{\uu}{\lambda}^2}   \sum_{\pi\colon \type_\uu(\pi)=\lambda}
+%\frac{1}{|\mu(\hatzero,\pi)|}\\
+%&= \frac{\delta_{\lambda,\mu} \uu!}{\binom{\uu}{\lambda}^2} \frac{\binom{\uu}{\lambda}}{|\mu(\hatzero,\lambda)|}
+%= \frac{\delta_{\lambda,\mu} \uu!}{\binom{\uu}{\lambda}|\mu(\hatzero,\lambda)|}
+%= \frac{\delta_{\lambda,\mu} |\lambda| \lambda!}{|\mu(\hatzero,\lambda)|}
+%\end{align*}
 
 Therefore, Proposition~\ref{expansion} says that for every $F\in\Mac$,
 \begin{equation} \label{expand-in-P-basis}
@@ -323,10 +284,9 @@ f_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(f_\mu)\rangle \mu(\
 
 \section{The omega involution, and expansions in the $e$- and $f$-bases}
 
-There is an automorphism $\omega\colon\Mac\to\Mac$ satisfying $\omega^2=\Id$.  Rosas states that
+There is an automorphism $\omega\colon\Mac\to\Mac$ (called $\theta$ in \cite{Doubilet}) defined by
 \[\omega(e_\lambda) = h_\lambda\]
-(that is the definition), and that
-\[\omega(m_\lambda) = \sign(\lambda) f_\lambda.\]
+This is defined in \cite[p.328]{Rosas} (and used to define the forgotten basis $f_\lambda=\sign(\lambda)\omega(m_\lambda)$).
 I would like to know what $\omega$ does to $p_\lambda$.  For symmetric functions, we have $\omega(p_\lambda)=\sign(\lambda) p_\lambda$ (where $\lambda$ is a partition), and for unitary MacMahon functions, we have $\omega(p_\pi)=\sign(\pi) p_\pi$ (where $\pi$ is a set partition).  It would be natural to hope that $\omega(p_\lambda)=\sign(\lambda) p_\lambda$ in general, though Rosas does not state that.  Can we prove it?  And can we prove that $\omega$ is an isometry?
 
 Or should we just assume all of these things?  If so, then applying $\omega$ to the conversions to the $h$-basis gives
@@ -378,4 +338,7 @@ m_\mu &= \sign(\mu)  \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} 
     \lambda(\sigma,\pi)!  f_\lambda
 \end{align*}
 
+
+\bibliographystyle{amsalpha}
+\bibliography{MacMahon}
 \end{document}
