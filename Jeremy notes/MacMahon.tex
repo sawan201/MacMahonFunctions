@@ -3,13 +3,47 @@
 \DeclareMathOperator{\type}{type}
 \begin{document}
 
+\section{Vector partitions and numerical functions}
+
 Let $\Nn$ denote the nonnegative integers and $\Pp$ the positive integers.
+
+Let $\uu\in\Nn^r$.  A \textbf{vector partition} of $\uu$ is a multiset of nonzero vectors $\lambda=\lambda^{(1)},\dots,\lambda^{(k)}\in\Nn^r$ that sum to $\uu$.
+ 
+\begin{itemize}
+%\item The $\lambda^{(j)}$ are the \textbf{parts} of $\lambda$.
+\item The \textbf{weight} $wt(\lambda)$ is the sum of all entries in its vectors.
+\item The \textbf{sign} is $\sign(\lambda)=(-1)^{\text{number of vectors with even sum}}$
+\item For a vector partition $\lambda$ in which each vector $v_i$ occurs with multiplicity $m_i$, define
+\[|\lambda|=\prod_im_i! \qqandqq \lambda!=\prod_i\prod_{x\in v_i}(x!)^{m_i}.\]
+\end{itemize}
+
+For example, the vector partitions of $\uu=(2,1)=21$ are as follows.
+\[\begin{array}{cccc}
+\lambda & \sign(\lambda) & |\lambda| & \lambda!\\ \hline
+21 & +1 & 1 & 2\\
+20,01 & -1 & 1  & 2\\
+10,11 & -1 & 1 & 1\\
+10,10,01 & +1 & 2 & 1 
+\end{array}\]
+
+A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.
+
+The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $\uu=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_\uu(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
+\[\#\{j\in B_k \mid u_1+\cdots+u_{i-1} < j \leq i_1+\cdots+u_i\}.\]
+ the number of elements of $B_k$ such that
+in the $i$th equivalence class.
+
+For a vector $\uu$ of weight $n$ and a vector partition $\lambda$ of weight $n$, the number of set partitions $\pi$ of type $\type_\uu(\pi)$ is
+\[\binom{\uu}{\lambda} := \frac{\uu!}{\lambda!\,|\lambda|}.\]
+
+\section{MacMahon symmetric functions}
+
 Fix $m\in\Pp$ and let $\mathcal{A}=\{x_{i,j} \mid i\in[r],\ j\in\Pp\}$.
 Everything that follows takes place in the ring of formal power series $R=\fld[[\mathcal{A}]]$, where $\fld$ is a field (assumed to be of characteristic~0 if necessary).  There is an $\Nn^r$-grading on $R$; the homogeneous component of degree $\uu=(u_1,\dots,u_r)\in\Nn^r$ is the vector space span of monomials having total degree $u_i$ in the variables $\{x_{i,j}\mid j\in\Pp\}$.
 
 The group $\Sym$ of permutations of $\Pp$ acts diagonally on $\mathcal{A}$ by $\sigma(x_{i,j})=x_{i,\sigma(j)}$; this action extends to $R$.  The invariants of the action are the \textbf{MacMahon (symmetric) functions}.  They form a graded subring $\Mac\subseteq R$, with $\Mac_\uu=\Mac\cap R_\uu$.
 
-Following Rosas \cite{Rosas}, the standard combinatorial bases for $\Mac$ are as follows.  For $\uu\in\Nn^r$, each basis for $\Mac_\uu$ is indexed by the \textbf{vector partitions} $\lambda\partn\uu$. Such a thing is a multiset of nonzero vectors $\lambda^{(1)},\dots,\lambda^{(k)}\in\Nn^r$ that sum to $\uu$.
+Following Rosas \cite{Rosas}, the standard combinatorial bases for $\Mac$ are as follows.  For $\uu\in\Nn^r$, each basis for $\Mac_\uu$ is indexed by the vector partitions of~$\uu$.
 
 Let $\lambda=\{\lambda^{(1)},\dots,\lambda^{(k)}\}$ be a vector partition, where $\lambda^{(j)}=(\ell_{1,j},\dots,\ell_{r,j})$.
 The \textbf{monomial MacMahon function} $m_\lambda$ is the sum of all monomials in the $\Sym$-orbit of the monomial
@@ -27,10 +61,12 @@ h_\lambda = \prod_{j=1}^k h_{\lambda^{(j)}}.\]
 Finally, there is an involutive automorphism $\omega\colon\Mac\to\Mac$ defined by $\omega(e_\lambda)=h_\lambda$.
 The \textbf{forgotten MacMahon functions} are defined by $f_\lambda=\sign(\lambda)m_\lambda$.
 
+The unitary MacMahon symmetric functions are the graded piece $\Mac_{(1)^r}$.  These are the focus of \cite{Doubilet}.
+ 
 \section{Transitions between bases}
 
 First, a standard linear algebra fact.
-Let $V$ be a vector space of finite dimension~$n$ over ground field $\Bbbk$ (it doesn't matter what it is).
+Let $V$ be a vector space of finite dimension~$n$ over ground field $\Bbbk$
 
 \begin{proposition} \label{expansion}
 Suppose that $B=\{v_1,\dots,v_n\}$ and $B^*=\{v_1^*,\dots,v_n^*\}$ are bases for $V$ that are orthogonal, i.e.,
@@ -55,28 +91,6 @@ This is necessary and sufficient for equality.
 This proposition reduces the problem of expanding a vector in a particular basis $B$ to computing inner products with an orthogonal basis $B^*$.
 (The best possible case is that $k_i=1$ for all $i$, i.e., $B^*$ is the dual basis to $B$.  However, we're not always that lucky.)
 
-
-Notation:
-\begin{itemize}
-\item $\Nn$ = nonnegative integers
-\item For $\uu\in\Nn^k$, a \textbf{vector partition} $\lambda\partn\uu$ is a multiset of nonzero vectors (the \textbf{parts} of $\lambda$) that sum to $u$.
-\item Weight of a vector partition = sum of all entries in all vectors in it (ex.: $\wt(\{120,100,100,013\})=9$)
-\item $\Mac_\uu$ = MacMahon symmetric functions of homogeneous multidegree $u$
-\item $\sign(\lambda)=(-1)^{\text{number of parts with even sum}}$
-\item $m_\lambda,e_\lambda,h_\lambda,p_\lambda,f_\lambda$: monomial, elementary, homogeneous, power-sum, and forgotten MacMahon symmetric functions \cite[pp.327--328]{Rosas}
-\item For a vector partition $\lambda$ in which each part $v_i$ occurs with multiplicity $m_i$, define
-\[|\lambda|=\prod_im_i! \qqandqq \lambda!=\prod_i\prod_{x\in v_i}(x!)^{m_i}.\]
-\end{itemize}
-
-A vector partition is \textbf{unitary} if it is a partition of the all-ones vector $\mathbf{1}\in\Nn^k$.  There is an obvious bijection between unitary vector partitions and set partitions of $[k]$.  Unitary MacMahon symmetric functions are the focus of \cite{Doubilet}.  These are the graded pieces $\Mac_{(1)^k}$.
-
-The \textbf{type} of a set partition $\pi=B_1|\cdots|B_\ell$, with respect to a vector $\uu=(u_1,\dots,u_r)$ of weight $n$, is the vector partition $\type_\uu(\pi)=\lambda=\lambda_1\cdots\lambda_\ell$ where $\lambda_k$ is the vector in $\Nn^r$ whose $i$th coordinate is
-\[\#\{j\in B_k \mid u_1+\cdots+u_{i-1} < j \leq i_1+\cdots+u_i\}.\]
- the number of elements of $B_k$ such that
-in the $i$th equivalence class.
-
-For a vector $\uu$ of weight $n$ and a vector partition $\lambda$ of weight $n$, the number of set partitions $\pi$ of type $\type_\uu(\pi)$ is
-\[\binom{\uu}{\lambda} := \frac{\uu!}{\lambda!\,|\lambda|}.\]
 
 Define a scalar product on $\Mac$:
 \begin{equation}\label{scalar-product}
