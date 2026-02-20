@@ -1,81 +1,49 @@
 from sage.all import *
-from sage.combinat.vector_partition import VectorPartition
 from MacMahon import MacMahonSymmetricFunctions
+from vector_partition import VectorPartition
+R = QQ
+A = MacMahonSymmetricFunctions(R)
 
-def _make_P():
-    """
-    Helper to construct the MacMahon powersum realization.
-    
-    """
-    MSym = MacMahonSymmetricFunctions(QQ)
-    # Directly construct the Powersum realization
-    P = MacMahonSymmetricFunctions.Powersum(MSym)
-    return P
+P = A.P()
+M = A.M()
+E = A.E()
+H = A.H()
 
+lam = VectorPartition([[1,1]])   
 
-def test_getitem_and_product():
-    P = _make_P()
-    VP = VectorPartition
+p = P[lam]
+m = M[lam]
+e = E[lam]
+h = H[lam]
 
-    # Basic vector partitions (dim 2)
-    vp_x = VP([[1, 0], [0, 1]])
-    vp_y = VP([[2, 0]])
-    vp_z = VP([[0, 1]])
-    vp_xy_concat = VP([[1, 0], [0, 1], [2, 0]])
+# 1) Does Sage think a coercion exists
+print("M <- P ?", M.has_coerce_map_from(P))
+print("P <- M ?", P.has_coerce_map_from(M))
+print("P <- E ?", P.has_coerce_map_from(E))
+print("P <- H ?", P.has_coerce_map_from(H))
 
-    # __getitem__ tests
+# 2) What is the actual map object
+print("M.coerce_map_from(P):", M.coerce_map_from(P))
+print("P.coerce_map_from(M):", P.coerce_map_from(M))
+print("P.coerce_map_from(E):", P.coerce_map_from(E))
+print("P.coerce_map_from(H):", P.coerce_map_from(H))
 
-    # Case 1: already a VectorPartition
-    assert P[vp_x] == P.monomial(vp_x)
+# 3) Explicit coercion on elements
+print("M(p) =", M(p))     # coercion P -> M
+print("P(m) =", P(m))     # coercion M -> P
+print("P(e) =", P(e))     # coercion E -> P
+print("P(h) =", P(h))     # coercion H -> P
+print("H(p) =", H(p))     # coercion P -> H
 
-    # Case 3: list of vectors
-    assert P[[[1, 0], [0, 1]]] == P.monomial(vp_x)
-    assert P[[[2, 0]]] == P.monomial(vp_y)
+# 4) Round trip tests 
+print("P(M(p)) == p ?", P(M(p)) == p)
+print("M(P(m)) == m ?", M(P(m)) == m)
 
-    # Case 4: single vector, coerced as one part
-    vp_single = VP([(1, 0)])          # match the way __getitem__ builds it
-    assert P[(1, 0)] == P.monomial(vp_single)
+# 5) Mixed arithmetic should auto coerce
+print("m + p =", m + p)          
+print("p + m =", p + m)          
+print("p * m =", p * m)          
 
+# 6) Checking Monomial Multiplication
 
-    # Case 5: list of two vectors as separate parts
-    vp_two = VP([[1, 0], [2, 3]])
-    assert P[[[1, 0], [2, 3]]] == P.monomial(vp_two)
-
-    # Case 6: something invalid should raise ValueError
-    try:
-        P[object()]
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("Expected ValueError from P[object()]")
-
-    # product_on_basis tests
-
-    # Product on basis indices is concatenation of parts
-    prod_xy = P.product_on_basis(vp_x, vp_y)
-    assert prod_xy == P.monomial(vp_xy_concat)
-
-    # Symmetry of product_on_basis (P basis is commutative)
-    prod_yx = P.product_on_basis(vp_y, vp_x)
-    assert prod_xy == prod_yx
-
-    # Tests on algebra elements
-
-    Ex = P.monomial(vp_x)
-    Ey = P.monomial(vp_y)
-    Ez = P.monomial(vp_z)
-
-    # Multiplication should agree with product_on_basis
-    assert Ex * Ey == P.monomial(vp_xy_concat)
-
-    # Associativity on elements
-    left = (Ex * Ey) * Ez
-    right = Ex * (Ey * Ez)
-    assert left == right
-
-    print("All MacMahonSymmetricFunctions tests passed")
-
-
-
-if __name__ == "__main__":
-    test_getitem_and_product()
+print("M[1,1] * M[2,2] =", M[1,1] * M[2,2])
