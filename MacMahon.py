@@ -1,5 +1,5 @@
 from sage.misc.bindable_class import BindableClass
-from vector_partition import VectorPartition, VectorPartitions
+from vector_partition_ahmad import VectorPartition, VectorPartitions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.hopf_algebras import HopfAlgebras
