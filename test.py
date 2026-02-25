@@ -1,3 +1,10 @@
+'''
+
+To use, from your sagemath terminal, cd into this directory. 
+Then load('MacMahon.py'). If load is successful, simply copy the code below ignoring the import statements, and  run it in the terminal.
+
+'''
+
 from sage.all import *
 from MacMahon import MacMahonSymmetricFunctions
 from vector_partition_ahmad import VectorPartition, VectorPartitions
