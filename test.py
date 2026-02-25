@@ -1,6 +1,6 @@
 from sage.all import *
 from MacMahon import MacMahonSymmetricFunctions
-from vector_partition import VectorPartition
+from vector_partition_ahmad import VectorPartition, VectorPartitions
 R = QQ
 A = MacMahonSymmetricFunctions(R)
 
