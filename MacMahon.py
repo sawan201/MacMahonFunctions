@@ -35,29 +35,25 @@ class MacMahonSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     def _an_element_(self):
         return self([[1]]) + 2 * self([[1,2]])
     
-    def some_elements(self):
-        
-        u = self.one()
-        o = self([[1]])
-        s = self.base_ring().an_element()
-        return [u, o, self([[1, 2]]), o + self([[1], [2]]), u + s * o]
-    
     def _coerce_map_from_(self, R):
         if isinstance(R, MacMahonSymBasis_abstract):
-            if R.realization_of() == self.realization_of():
-                return True
+            if R.realization_of() != self.realization_of():
+                return None
             if not self.base_ring().has_coerce_map_from(R.base_ring()):
-                return False
-            if self._basis_name == R._basis_name:  # The same basis
-                def coerce_base_ring(self, x):
-                    return self._from_dict(x.monomial_coefficients())
-                return coerce_base_ring
-            # Otherwise lift that basis up and then coerce over
-            target = getattr(self.realization_of(), R._basis_name)()
-            return self._coerce_map_via([target], R)
+                return None
+            if self._basis_name == R._basis_name:
+                # same basis, possibly different base ring
+                return True
+
+            P = self.realization_of().P()
+            return self._coerce_map_via([P], R)
         return super()._coerce_map_from_(R)
-    
-    
+
+
+
+
+
+
 class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
     
     def __init__(self, R):
@@ -67,7 +63,7 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
 
     def _repr_(self):
 
-        return "MacMahon symmetric functions over {}".format(self.base_ring())
+        return "MacMahon symmetric functions over the {}".format(self.base_ring())
 
     
     def a_realization(self):
@@ -103,28 +99,49 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
             phi_inv.register_as_coercion()
 
 
-        def _M_to_P(self, mu): ##error
+        def _M_to_P(self, mu): 
             p = self.realization_of().P()
             u = self.sum_vp(mu)
             n = sum(u)
             P = posets.SetPartitions(n)
             Mu = P.moebius_function
             Ze = P.bottom()
-            return 1 / self.Choose(u,mu) / self.Bars(mu) * \
-            sum( abs(self.mobius_bottom_from_type(la)) * \
-                sum( Mu(pi,sigma) / abs(Mu(Ze,sigma)) \
-                for pi in P for sigma in P if self.Type(u,sigma) == la and self.Type(u,pi) == mu and sigma in pi.coarsenings()) \
-            * p[la] for la in VectorPartitions(u))
+            coeffs = {}
+
+            for la in VectorPartitions(u):
+
+                inner = sum(
+                    Mu(pi, sigma) / abs(Mu(Ze, sigma))
+                    for pi in P
+                    for sigma in P
+                    if self.Type(u, sigma) == la
+                    and self.Type(u, pi) == mu
+                    and pi in sigma.coarsenings()   
+                )
+
+                coeff = (
+                    1 / self.Choose(u, mu) / self.Bars(mu)
+                    * abs(self.mobius_bottom_from_type(la))
+                    * inner
+                )
+
+                if coeff:
+                    coeffs[la] = coeff
+
+            return p._from_dict(coeffs, coerce=True)
         
         def _P_to_M(self, mu):
             m = self
             u = self.sum_vp(mu)
             n = sum(u)
             P = posets.SetPartitions(n)
-            return self.Factorial(u) / self.Choose(u,mu) * \
-            sum( 1 / self.Choose(u, la) / self.Factorial(la) * len([(pi,sigma) for pi in P for sigma in P if \
-            self.Type(u,pi) == la and self.Type(u,sigma) == mu and pi in sigma.coarsenings()]) * m[la] \
-            for la in VectorPartitions(u))
+            coeffs = {}
+            for la in VectorPartitions(u):
+                coeff = 1 / self.Choose(u, la) / self.Factorial(la) * len([(pi,sigma) for pi in P for sigma in P if self.Type(u,pi) == la and self.Type(u,sigma) == mu and pi in sigma.coarsenings()])
+                coeffs[la] = coeff
+               
+            return m._from_dict(coeffs, coerce=True)
+
 
         def product_on_basis(self, x, y):
             p = self.realization_of().P()
@@ -147,18 +164,32 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
 
 
 
-        def _E_to_P(self, mu): #erro
+        def _E_to_P(self, mu): 
             p = self.realization_of().P()
             u = self.sum_vp(mu)
             n = sum(u)
             P = posets.SetPartitions(n)
             Mu = P.moebius_function
             Ze = P.bottom()
-            return 1 / self.Choose(u,mu) / self.Factorial(mu) * \
-            sum( abs(self.mobius_bottom_from_type(la)) * \
-                sum( sigma.to_partition().sign() for pi in P for sigma in P if self.Type(u,sigma) == la and self.Type(u,pi) == mu and pi in sigma.coarsenings()) \
-            * p[la] for la in VectorPartitions(u))
-        
+            coeffs = {}
+            for la in VectorPartitions(u):
+                inner = sum(
+                    sigma.to_partition().sign()
+                    for pi in P
+                    for sigma in P
+                    if self.Type(u, sigma) == la
+                    and self.Type(u, pi) == mu
+                    and pi in sigma.coarsenings())
+                
+                coeff = (
+                    1/ self.Choose(u, mu) / self.Factorial(mu)
+                    * abs(self.mobius_bottom_from_type(la))
+                    * inner
+                )
+
+                if coeff:
+                    coeffs[la] = coeff
+            return p._from_dict(coeffs, coerce=True)
 
 
        
@@ -183,17 +214,30 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
             phi_inv = p.module_morphism(self._P_to_H, codomain=self)
             phi_inv.register_as_coercion()
 
-        def _H_to_P(self, mu): #error
+        def _H_to_P(self, mu): 
             p = self.realization_of().P()
             u = self.sum_vp(mu)
             n = sum(u)
             P = posets.SetPartitions(n)
             Mu = P.moebius_function
             Ze = P.bottom()
-            return 1 / self.Choose(u,mu) / self.Factorial(mu) * \
-            sum( abs(self.mobius_bottom_from_type(la)) * \
-                len([(sigma, pi) for pi in P for sigma in P if self.Type(u,sigma) == la and self.Type(u,pi) == mu and pi in sigma.coarsenings()]) \
-            * p[la] for la in VectorPartitions(u))
+            coeffs = {}
+
+            for la in VectorPartitions(u):
+                inner = [(sigma, pi) for pi in P for sigma in P if self.Type(u,sigma) == la and self.Type(u,pi) == mu and pi in sigma.coarsenings()]
+
+                coeff = (
+                    1 / self.Choose(u, mu) / self.Factorial(mu)
+                    * abs(self.mobius_bottom_from_type(la)) * len(inner)
+                )
+
+                if coeff:
+                    coeffs[la] = coeff
+
+            return p._from_dict(coeffs, coerce=True)
+
+
+
         
         def _P_to_H(self, mu):
             h = self
@@ -202,11 +246,30 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
             P = posets.SetPartitions(n)
             Mu = P.moebius_function
             Ze = P.bottom()
-            return self.Factorial(u) / self.Choose(u,mu) * \
-            sum( 1 / self.Choose(u, la) / self.Bars(la) * \
-                sum( Mu(pi,sigma) / abs(Mu(Ze, sigma)) \
-                for pi in P for sigma in P if self.Type(u,pi) == la and self.Type(u,sigma) == mu and sigma in pi.coarsenings() ) \
-            * h[la] for la in VectorPartitions(u))
+            coeffs = {}
+            for la in VectorPartitions(u):
+
+                inner = sum(
+                    Mu(pi, sigma) / abs(Mu(Ze, sigma))
+                    for pi in P
+                    for sigma in P
+                    if self.Type(u,pi) == la
+                    and self.Type(u, sigma) == mu
+                    and sigma in pi.coarsenings()
+                )
+
+                coeff = (
+                    self.Factorial(u) / self.Choose(u, mu)
+                    * (1 / self.Choose(u, la) / self.Bars(la))
+                    * inner
+                )
+
+                if coeff:
+                    coeffs[la] = coeff
+                
+            return h._from_dict(coeffs, coerce=True)
+            
+
  
         def product_on_basis(self, x, y):
             z = VectorPartition(list(x) + list(y))
@@ -233,27 +296,17 @@ class MSymBases(Category_realization_of_parent):
     
     def super_categories(self):
         R = self.base().base_ring()
-        cat = HopfAlgebras(R).Graded().WithBasis()
-        if self._graded:
-            cat = cat.Graded()
-        else:
-            cat = cat.Filtered()
-
-        return [self.base().Realizations(),
-                HopfAlgebras(R).Graded().Realizations(),
-                cat.Connected()]
+        return [
+        self.base().Realizations(),
+        HopfAlgebras(R).Graded().WithBasis().Connected()
+    ]
     
     class ParentMethods:
         def _repr_(self):
             return "{} in the {} basis".format(self.realization_of(), self._basis_name)
 
         def __getitem__(self, p):
-            '''
-            Need a way to return M/P/E/H[something], 
-            p must be a VectorPartition()
-
-
-            '''
+ 
             #Case 1: p is already a vector partition
             if isinstance(p, VectorPartition):
                 return self.monomial(p)
