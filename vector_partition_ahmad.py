@@ -135,6 +135,10 @@ class VectorPartition(CombinatorialElement):
             sage: V.parent()._vec
             (5, 4, 2)
         """
+        if len(vecpar) == 0:
+            P = VectorPartitions_all()
+            return P.element_class(P, [])
+        
         vec = [sum([vec[i] for vec in vecpar]) for i in range(len(vecpar[0]))]
         P = VectorPartitions(vec)
         return P(vecpar)
@@ -371,43 +375,38 @@ class VectorPartitions_all(VectorPartitions):
                 for vecpar in VectorPartitions(vec):
                     yield self.element_class(self, vecpar)
             n += 1
+
     def _element_constructor_(self, vecpar):
         # Case 1: already an element of this parent
         if isinstance(vecpar, VectorPartition) and vecpar.parent() is self:
-            
             return vecpar
 
         # Case 2: a VectorPartition from some other parent
         if isinstance(vecpar, VectorPartition):
-            
-            parts = [list(v) for v in vecpar]   # list of vectors
-            return self.element_class(self, parts)
+            parts = [list(v) for v in vecpar]
+            vec = [sum(p[i] for p in parts) for i in range(len(parts[0]))] if parts else []
+            return VectorPartitions(vec)(parts)
 
-        # Case 3: 
+        # Case 3:
         if isinstance(vecpar, (list, tuple)):
-            
-            # empty partition
             if len(vecpar) == 0:
                 return self.element_class(self, [])
 
-            # If it's a flat list or tuple of integers like (1,2),
-            # interpret it as a single vector part: [[1,2]]
             if all(s in ZZ for s in vecpar):
-                
                 one_vec = [ZZ(s) for s in vecpar]
-                return self.element_class(self, [one_vec])
+                vec = one_vec  # single part, sum is itself
+                return VectorPartitions(vec)([one_vec])
 
-            # Otherwise interpret as a list of vectors
-            # Example: [[1,0],[0,2]] or ((1,0),(0,2))
-            
             parts = [[ZZ(s) for s in v] for v in vecpar]
-            return self.element_class(self, parts)
+            vec = [sum(p[i] for p in parts) for i in range(len(parts[0]))]
+            return VectorPartitions(vec)(parts)
 
         raise TypeError(f"cannot construct a vector partition from {vecpar}")
+
+
 
 
     class Element(VectorPartition):
         def _richcmp_(self, other, op):
             
-            return richcmp([sorted(s) for s in self],
-                           [sorted(s) for s in other], op)
+            return richcmp(list(self), list(other), op)
