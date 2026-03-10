@@ -126,7 +126,7 @@ F = \sum_{\lambda\partn\uu} \langle m_\lambda,\,F\rangle\, h_\lambda,
 \qquad\qquad
 F = \sum_{\lambda\partn\uu} \langle h_\lambda,\,F\rangle\, m_\lambda.
 \end{equation}
-Doubilet \cite[Appendix 2]{Doubilet} calculated the scalar products for all five families of unitary symmetric functions (which requires things like lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$).  Therefore, we should be able to compute scalar products, and thus basis expansions, for all MacMahon functions.  \Red{Warning:} Doubilet's notation for the standard bases is not the usual modern notation (he used $k,a,h,s,f$ for what we call $m,e,h,p,f$ --- perhaps this was not standardized in 1970?), and each of his formulas has an extra $n!$ that needs to be deleted (he was working in an analogous ring where the $n!$ makes sense.  Rosas reproduced Doubilet's calculations (in modern notation and without the $n!$'s that are extraneous in our context).
+Doubilet \cite[Appendix 2]{Doubilet} calculated the scalar products for all five families of unitary symmetric functions (which require things like lattice operations and  M\"obius and zeta functions in the set partition lattice $\Pi_n$).  Therefore, we should be able to compute scalar products, and thus basis expansions, for all MacMahon functions.  \Red{Warning:} Doubilet's notation for the standard bases is not the usual modern notation (he used $k,a,h,s,f$ for what we call $m,e,h,p,f$ --- perhaps this was not standardized in 1970?), and each of his formulas has an extra $n!$ that needs to be deleted (he was working in an analogous ring where the $n!$ makes sense).  Rosas~\cite{Rosas} reproduced Doubilet's calculations (in modern notation and without the $n!$'s that are extraneous in our context).
 
 \section{Expansions in the $m$-basis}
 
@@ -143,7 +143,7 @@ p_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(h_\lambda),\,\hat\rho(p_
     \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
     \zeta(\sigma,\pi) m_\lambda
 	&&\text{(by~Doubilet formula \#3)}\\
-p_\mu &=  \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \sigma\leq\pi\}}{\binom{\uu}{\lambda}\lambda!}
+&=  \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \sigma\leq\pi\}}{\binom{\uu}{\lambda}\lambda!}
     m_\lambda
 \end{align*}
 
@@ -322,60 +322,14 @@ f_\mu &= \sum_\lambda \langle \hat\rho(p_\lambda),\,\hat\rho(f_\mu)\rangle |\mu(
 
 \section{The omega involution, and expansions in the $e$- and $f$-bases}
 
-There is an automorphism $\omega\colon\Mac\to\Mac$ (called $\theta$ in \cite{Doubilet}) defined by
-\[\omega(e_\lambda) = h_\lambda\]
-This is defined in \cite[p.328]{Rosas} (and used to define the forgotten basis $f_\lambda=\sign(\lambda)\omega(m_\lambda)$).
-I would like to know what $\omega$ does to $p_\lambda$.  For symmetric functions, we have $\omega(p_\lambda)=\sign(\lambda) p_\lambda$ (where $\lambda$ is a partition), and for unitary MacMahon functions, we have $\omega(p_\pi)=\sign(\pi) p_\pi$ (where $\pi$ is a set partition).  It would be natural to hope that $\omega(p_\lambda)=\sign(\lambda) p_\lambda$ in general, though Rosas does not state that.  Can we prove it?  And can we prove that $\omega$ is an isometry?
-
-Or should we just assume all of these things?  If so, then applying $\omega$ to the conversions to the $h$-basis gives
-
+There is an involutive automorphism $\omega\colon\Mac\to\Mac$ (called $\theta$ in \cite{Doubilet}) defined by $\omega(e_\lambda) = h_\lambda$.  Rosas defines it at \cite[p.328]{Rosas} and then uses it to define the forgotten basis as $f_\lambda=\sign(\lambda)\omega(m_\lambda)$.  Rosas also states as a fact (in the middle of a proof on p.334) that $\omega(p_\lambda)=\sign(\lambda) p_\lambda$, although she does not explain where that formula comes from.  It may be in Doublet somewhere.  It certainly feels true (it's true for symmetric functions).  In summary, $\omega$ acts on basis elements by
 \begin{align*}
-f_\mu &= \sign(\mu) \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
-    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
-    \sum_{\tau\geq\pi\join\sigma} \frac{\mu(\pi,\tau)\mu(\sigma,\tau)}{\mu(\hatzero,\tau)}\, e_\lambda
+\omega(e_\lambda) &= h_\lambda,\\
+\omega(h_\lambda) &= e_\lambda,\\
+\omega(m_\lambda) &= \sign(\lambda)f_\lambda,\\
+\omega(f_\lambda) &= \sign(\lambda)m_\lambda,\\
+\omega(p_\lambda) &= \sign(\lambda)p_\lambda.
 \end{align*}
-
-\begin{align*}
-p_\mu &= \sign(\mu) \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
-    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \pi\leq\sigma}}
-    \frac{\mu(\pi,\sigma)}{|\mu(\hatzero,\sigma)|}\, e_\lambda
-\end{align*}
-
-\begin{align*}
-h_\mu &= \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
-    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \pi\leq\sigma}}
-    \sign(\pi) \lambda(\pi,\sigma)!\, e_\lambda
-\end{align*}
-
-\begin{align*}
-m_\mu &= \sign(\mu) \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \frac{1}{\binom{\uu}{\lambda}|\lambda|}
-    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
-    \sum_{\tau\geq\sigma\join\pi} \frac{|\mu(\sigma,\tau)|\cdot\mu(\pi,\tau)}{\mu(\hatzero,\tau)}\, e_\lambda
-\end{align*}
-
-and likewise applying $\omega$ to the conversions to the $m$-basis gives
-
-\begin{align*}
-p_\mu &= \sign(\mu)  \frac{\uu!}{\binom{\uu}{\mu}} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \sigma\leq\pi\}}{\binom{\uu}{\lambda}\lambda!}
-    f_\lambda
-\end{align*}
-
-\begin{align*}
-e_\mu &= \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{1}{\binom{\uu}{\lambda}\lambda!}
-    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu}}
-    \lambda(\sigma\meet\pi)!\, f_\lambda
-\end{align*}
-
-\begin{align*}
-h_\mu &=  \frac{\uu!}{\binom{\uu}{\mu}\mu!} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{\#\{(\pi,\sigma)\mid \type_\uu(\pi)=\lambda,\ \type_\uu(\sigma)=\mu,\ \pi\meet\sigma=\hatzero\}}{\binom{\uu}{\lambda}\lambda!} f_\lambda
-\end{align*}
-
-\begin{align*}
-m_\mu &= \sign(\mu)  \frac{\uu!}{\binom{\uu}{\mu}|\mu|} \sum_{\lambda\partn\uu} \sign(\lambda) \frac{1}{\binom{\uu}{\lambda}\lambda!}
-    \sum_{\substack{\pi\colon \type_\uu(\pi)=\lambda\\ \sigma\colon \type_\uu(\sigma)=\mu\\ \sigma\leq\pi}}
-    \lambda(\sigma,\pi)!  f_\lambda
-\end{align*}
-
 
 \bibliographystyle{amsalpha}
 \bibliography{MacMahon}
