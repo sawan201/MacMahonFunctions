@@ -7,11 +7,11 @@
 
 Let $\Nn$ denote the nonnegative integers and $\Pp$ the positive integers.
 
-Let $\uu\in\Nn^r$.  A \textbf{vector partition} of $\uu$ is a multiset of nonzero vectors $\lambda=\lambda^{(1)},\dots,\lambda^{(k)}\in\Nn^r$ that sum to $\uu$.
+Let $\uu\in\Nn^r$.  Write $\uu=(u_1,\dots,u_r)$ and $\wt(\uu)=\sum u_i$.  A \textbf{vector partition} of $\uu$ is a multiset of nonzero vectors $\lambda=\lambda^{(1)},\dots,\lambda^{(k)}\in\Nn^r$ that sum to $\uu$.
  
 \begin{itemize}
-%\item The $\lambda^{(j)}$ are the \textbf{parts} of $\lambda$.
-\item The \textbf{weight} $wt(\lambda)$ is the sum of all entries in its vectors.
+\item The \textbf{length} is $\ell(\lambda)=k$.
+\item The \textbf{weight} $wt(\lambda)$ is the sum of all entries in its vectors (so $\wt(\lambda)=\wt(\uu)$).
 \item The \textbf{sign} is $\sign(\lambda)=(-1)^{\text{number of vectors with even sum}}$
 \item For a vector partition $\lambda$ in which each vector $v_i$ occurs with multiplicity $m_i$, define
 \[|\lambda|=\prod_im_i! \qqandqq \lambda!=\prod_i\prod_{x\in v_i}(x!)^{m_i}.\]
@@ -254,11 +254,21 @@ f_\mu &=  \uu! \sum_{\lambda\partn\uu} \langle \hat\rho(m_\lambda),\,\hat\rho(f_
 
 \section{Expansions in the $p$-basis}
 
+Let $\uu\in\Nn^r$ and $n-=\wt(\uu)$.
 Rosas \cite[p.333]{Rosas} states that for $\lambda\partn\uu$,
 \begin{equation}
 \langle p_\lambda,\,p_\mu \rangle = \frac{\delta_{\lambda,\mu}|\lambda|\,\lambda!}{|\mu(\hatzero,\lambda)|}
 \end{equation}
-where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\pi$ such that $\type_u(\pi)=\lambda$.  This can be verified using the lifting maps and Doubilet's formula.
+where $\mu(\hatzero,\lambda)$ means $\mu(\hatzero,\pi)$ for any set partition $\pi$ such that $\type_u(\pi)=\lambda$.  This can be verified using the lifting maps and Doubilet's formula.  For the purpose of computation, a set partition $\pi$ can be constructed as follows:
+\begin{itemize}
+\item Partition $[n]$ into sets $A_1,\dots,A_r$, with $|A_i|=u_i$.
+\item For each vector $\lambda^{(i)}=(\lambda^{(i)}_1,\dots,\lambda^{(i)}_r)\in\lambda$, make a new block $B_i$ consisting of the $\lambda^{(i)}_j$ smallest elements of $A_j$, for each $j\in[r]$.  Remove those elements from $A_j$ when adding them to $B_i$.
+\item At this point the sets $A_j$ should all be empty, and the desired set partition is $\pi=\{B_1,\dots,B_{\ell(\lambda)}\}$.
+\end{itemize}
+
+
+Let $A_1=[1,u_1]$, $A_2=[u_1+1,u_1+u_2]$, \dots $A_k=[u_1+\cdots+u_{k-1}+1,u_1+u_2]$, \dots $A_2=[u_1+1,u_1+u_2]$, \dots 
+
 % Verification:
 %\begin{align*}
 %\scp{p_\lambda}{p_\mu}
