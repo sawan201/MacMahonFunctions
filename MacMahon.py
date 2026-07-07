@@ -1,6 +1,7 @@
-r"""
+"""
 MacMahon symmetric functions
 
+Written by: Saad Awan (The University of Kansas)
 
 This file implements MacMahon symmetric functions over a commutative base
 ring.  The basis elements are indexed by vector partitions.
@@ -220,6 +221,22 @@ Multiplicative sanity checks::
     True
     sage: M(F[a] * F[b]) == M(F[b] * F[a])
     True
+
+Monomial and forgotten products with known values (these distinguish the
+true product from the powersum concatenation, which commutativity alone does
+not)::
+
+    sage: A = MacMahonSymmetricFunctions(QQ)
+    sage: M, F = A.M(), A.F()
+    sage: one = VectorPartition([[1]])
+    sage: M[one] * M[one] == M[[2]] + 2*M[[1], [1]]
+    True
+    sage: M[VectorPartition([[1], [1]])] * M[one] == M[[2], [1]] + 3*M[[1], [1], [1]]
+    True
+    sage: F[one] * F[one] == F[[2]] + 2*F[[1], [1]]
+    True
+    sage: F[VectorPartition([[1], [1]])] * F[one] == F[[2], [1]] + 3*F[[1], [1], [1]]
+    True
 """
 
 from sage.misc.bindable_class import BindableClass
@@ -230,12 +247,9 @@ from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.all import factorial, prod, SetPartition, QQ, Partition
+from math import factorial
+from sage.all import prod, SetPartition, QQ, Partition
 from sage.rings.integer_ring import ZZ
-
-# The transition engine does its linear algebra in ``fractions.Fraction``
-# (exact and lightweight) and only coerces into Sage's ``QQ`` when the final
-# module element is built; ``lru_cache`` memoizes the per-degree work.
 from fractions import Fraction as _Fr
 from functools import lru_cache
 from itertools import combinations
@@ -391,7 +405,7 @@ def _moebius_interval(f, c):
         1
     """
     if f == c:
-        return 1
+        return int(1)
     fsets = [frozenset(A) for A in f]
     val = 1
     for B in c:
@@ -401,7 +415,7 @@ def _moebius_interval(f, c):
         # factor (-1)^(k-1) (k-1)! to the Mobius value.
         k = sum(1 for A in fsets if A <= Bset)
         val *= (-1) ** (k - 1) * factorial(k - 1)
-    return val
+    return int(val)
 
 
 def _type_key(u, pi):
@@ -488,7 +502,7 @@ def _factorial_key(key):
     for v in key:
         for x in v:
             out *= factorial(x)
-    return out
+    return int(out)
 
 
 def _bars_key(key):
@@ -522,7 +536,7 @@ def _bars_key(key):
         if part not in seen:
             seen.append(part)
             out *= factorial(key.count(part))
-    return out
+    return int(out)
 
 
 def _choose(u, key):
@@ -551,7 +565,7 @@ def _choose(u, key):
     num = 1
     for x in u:
         num *= factorial(x)
-    return _Fr(num, 1) / _factorial_key(key) / _bars_key(key)
+    return _Fr(int(num)) / _factorial_key(key) / _bars_key(key)
 
 
 def _abs_mu_bottom_key(key):
@@ -581,7 +595,7 @@ def _abs_mu_bottom_key(key):
     out = 1
     for v in key:
         out *= factorial(sum(v) - 1)
-    return out
+    return int(out)
 
 
 def _sign_key(key):
@@ -609,7 +623,7 @@ def _sign_key(key):
         1
     """
     num = sum(1 for v in key if sum(v) % 2 == 0)
-    return -1 if (num % 2) else 1
+    return int(-1 if (num % 2) else 1)
 
 
 
@@ -640,17 +654,22 @@ def _frac_inverse(M):
     n = len(M)
     # Build the augmented matrix A = [ M | I ] with exact entries.
     A = [[_Fr(M[i][j]) for j in range(n)] +
-         [_Fr(1 if k == i else 0) for k in range(n)] for i in range(n)]
+         [_Fr(int(1 if k == i else 0)) for k in range(n)] for i in range(n)]
     for col in range(n):
         # Pick a nonzero pivot in this column and bring it onto the diagonal.
-        piv = next(r for r in range(col, n) if A[r][col] != 0)
+        # Nonzero-ness is tested by truthiness rather than ``!= 0``: under the
+        # Sage preparser the literal ``0`` becomes ``Integer(0)``, and
+        # ``Fraction.__eq__`` against a Sage ``Integer`` is always ``False``
+        # (its ``.numerator`` is a method), so ``!= 0`` would select zero
+        # pivots.  ``bool(Fraction)`` is reliable.
+        piv = next(r for r in range(col, n) if A[r][col])
         A[col], A[piv] = A[piv], A[col]
         # Normalize the pivot row so the pivot entry becomes 1.
         pv = A[col][col]
         A[col] = [x / pv for x in A[col]]
         # Clear this column out of every other row.
         for r in range(n):
-            if r != col and A[r][col] != 0:
+            if r != col and A[r][col]:
                 f = A[r][col]
                 A[r] = [A[r][k] - f * A[col][k] for k in range(2 * n)]
     # After full reduction the left half is I and the right half is M^{-1}.
@@ -771,11 +790,11 @@ def _degree_engine(u):
     #          feeds the monomial -> powersum map.
     #   cnt -- a plain count of such f; this feeds the homogeneous -> powersum
     #          map (and, after a sign twist, the elementary one).
-    mob = [[_Fr(0)] * N for _ in range(N)]
+    mob = [[_Fr(int(0))] * N for _ in range(N)]
     cnt = [[0] * N for _ in range(N)]
     for c in _set_partitions(n):
         ci = pos[typ[c]]                                  # column = type of c
-        inv_absmu_c = _Fr(1, _abs_mu_bottom_key(typ[c]))  # 1 / |mu(0, c)|
+        inv_absmu_c = _Fr(int(1), _abs_mu_bottom_key(typ[c]))  # 1/|mu(0, c)|
         for f in _refinements(c):
             fi = pos[typ[f]]                              # row = type of f
             mob[fi][ci] += _Fr(_moebius_interval(f, c)) * inv_absmu_c
@@ -786,8 +805,8 @@ def _degree_engine(u):
     # Assemble the two forward maps to the powersum basis, attaching the
     # multinomial/Bars/Factorial prefactors that the type-bucketing factored
     # out of the lattice sum.
-    MP = [[_Fr(0)] * N for _ in range(N)]   # M -> P
-    HP = [[_Fr(0)] * N for _ in range(N)]   # H -> P
+    MP = [[_Fr(int(0))] * N for _ in range(N)]   # M -> P
+    HP = [[_Fr(int(0))] * N for _ in range(N)]   # H -> P
     for i, mu in enumerate(order):
         ch = _choose(u, mu)          # Factorial(u)/Factorial(mu)/Bars(mu)
         bars = _bars_key(mu)
@@ -796,11 +815,11 @@ def _degree_engine(u):
             absla = _abs_mu_bottom_key(la)
             # M -> P : source mu is the finer type, target la the coarser;
             #          the lattice summand is the Mobius weight.
-            MP[i][j] = _Fr(1) / ch / bars * absla * mob[i][j]
+            MP[i][j] = _Fr(int(1)) / ch / bars * absla * mob[i][j]
             # H -> P : source mu is the coarser type, target la the finer
             #          (hence the transposed access cnt[j][i]); the summand is
             #          a plain count of refinements.
-            HP[i][j] = _Fr(1) / ch / fct * absla * cnt[j][i]
+            HP[i][j] = _Fr(int(1)) / ch / fct * absla * int(cnt[j][i])
 
     # E -> P is H -> P with the omega sign applied in the powersum basis.
     EP = [[HP[i][j] * sign[j] for j in range(N)] for i in range(N)]
@@ -817,7 +836,7 @@ def _degree_engine(u):
     FM = _matmul(MPdiag, PM)
     MF = _frac_inverse(FM)
 
-    I = [[_Fr(1 if i == j else 0) for j in range(N)] for i in range(N)]
+    I = [[_Fr(int(1 if i == j else 0)) for j in range(N)] for i in range(N)]
 
     # Collect, for each basis, its matrix into the powersum basis ("toP") and
     # out of it ("frP").  P is the hub, so its own maps are the identity.
@@ -1004,7 +1023,7 @@ class MacMahonSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         coeffs = {}
         for j, la_key in enumerate(order):
             c = mat[row][j]
-            if c != 0:
+            if c:   # truthiness, not ``!= 0``: reliable even against Sage Integers
                 coeffs[key_to_elt[la_key]] = QQ(c.numerator) / QQ(c.denominator)
         return target._from_dict(coeffs, coerce=True)
 
@@ -1158,8 +1177,43 @@ class MSymBases(Category_realization_of_parent):
             r"""
             Return the basis element indexed by ``p``.
 
-            The index may already be a ``VectorPartition`` or may be data that
-            ``VectorPartitions`` can coerce to a vector partition.
+            This is the usual shorthand for entering an element of the
+            basis: the index may already be a ``VectorPartition``, or it
+            may be data that ``VectorPartitions`` can coerce into one --
+            most usefully a bare list of vector parts, so that the
+            element
+
+            ::
+
+                sage: A = MacMahonSymmetricFunctions(QQ)
+                sage: E = A.E()
+                sage: E[VectorPartition([[1]])]
+                E[[1]]
+
+            can also be entered as::
+
+                sage: E[[1]]
+                E[[1]]
+
+            Each inner list is one vector part::
+
+                sage: E[[2],[1]] == E[VectorPartition([[2], [1]])]
+                True
+
+            .. WARNING::
+
+                A flat list of integers is read as a *single* vector
+                part, not as several parts of length one::
+
+                    sage: E[[2,1]] == E[VectorPartition([[2, 1]])]
+                    True
+                    sage: E[[2,1]] == E[[2],[1]]
+                    False
+
+            The empty list indexes the unit::
+
+                sage: E[[]] == E.one()
+                True
 
             EXAMPLES::
 
@@ -1308,15 +1362,50 @@ class MSymBases(Category_realization_of_parent):
 
 class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
-    The algebra of MacMahon symmetric functions.
+    The Hopf algebra of MacMahon symmetric functions over ``R``.
 
     INPUT:
 
     - ``R`` -- a commutative base ring.
 
-    This parent represents the graded connected Hopf algebra of MacMahon
-    symmetric functions over ``R``.  The implemented realizations are the
-    powersum, monomial, elementary, homogeneous, and forgotten bases.
+    The MacMahon symmetric functions can be described in two equivalent
+    ways:
+
+    - abstractly, as a commutative, co-commutative combinatorial Hopf
+      algebra with bases indexed by vector partitions;
+
+    - concretely, as an extension of the symmetric functions, namely as
+      the space of formal power series of bounded degree in a finite
+      number of alphabets
+
+      .. MATH::
+
+          x^{(1)}, \ldots, x^{(r)}, \qquad
+          x^{(j)} = (x_1^{(j)}, x_2^{(j)}, \ldots),
+
+      that is invariant under the *diagonal* action of the symmetric
+      group, in which a permutation `w` sends `x_i^{(j)}` to
+      `x_{w(i)}^{(j)}` simultaneously in every alphabet `j`.  A monomial
+      records, for each subscript `i`, the column of exponents it uses
+      from the `r` alphabets, and the diagonal action permutes these
+      columns; the orbit sums (the monomial basis) are therefore indexed
+      by *vector partitions*, i.e. multisets of nonzero vectors in
+      `\NN^r`.
+
+    When `r = 1` this is exactly the algebra of symmetric functions, and
+    vector partitions with parts of length one reduce to ordinary
+    partitions.
+
+    The algebra is graded by the multidegree `\mathbf{u} \in \NN^r` (the
+    componentwise sum of the parts of the indexing vector partition), and
+    each graded component is finite dimensional.  The implemented
+    realizations are the powersum (``P``), monomial (``M``), elementary
+    (``E``), homogeneous (``H``), and forgotten (``F``) bases.  The
+    powersum basis is the hub: the coproduct and antipode are native
+    there (each `p_v` on a single vector part `v` is primitive), all
+    changes of basis are routed through it via exact cached transition
+    matrices, and the other bases inherit their Hopf operations by
+    coercion.
 
     EXAMPLES::
 
@@ -1328,11 +1417,41 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
         sage: A.M()
         MacMahon symmetric functions over the Rational Field in the Monomial basis
 
+    Changing basis::
+
+        sage: P, M, E, H, F = A.P(), A.M(), A.E(), A.H(), A.F()
+        sage: lam = VectorPartition([[2,1]])
+        sage: H(E(lam)) == 3*H[[0,1],[1,0],[1,0]] - 2*H[[0,1],[2,0]] - 2*H[[1,0],[1,1]] + H[[2,1]]
+        True
+        sage: E(H(E(lam))) == E(lam)
+        True
+
+    In one alphabet the classical identities of ``Sym`` are recovered::
+
+        sage: E(P[[2]]) == E[[1],[1]] - 2*E[[2]]
+        True
+        sage: P(E[[2]]) == P[[1],[1]]/2 - P[[2]]/2
+        True
+
     TESTS::
 
         sage: A = MacMahonSymmetricFunctions(QQ)
         sage: A.a_realization() is A.P()
         True
+
+    REFERENCES:
+
+    - P. Doubilet, *On the foundations of combinatorial theory. VII:
+      Symmetric functions through the theory of distribution and
+      occupancy*, Studies in Appl. Math. 51 (1972), 377--396.
+
+    - M. H. Rosas, *MacMahon symmetric functions, the partition lattice,
+      and Young subgroups*, J. Combin. Theory Ser. A 96 (2001), 326--340.
+
+    - M. H. Rosas, *A combinatorial overview of the Hopf algebra of
+      MacMahon symmetric functions*, Ann. Comb. 6 (2002), 65--76.
+
+    - J. L. Martin, *Notes on MacMahon symmetric functions*.
     """
 
     def __init__(self, R):
@@ -1345,7 +1464,7 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
             sage: A.base_ring()
             Rational Field
         """
-        category = HopfAlgebras(R).Graded().Connected().Commutative()
+        category = HopfAlgebras(R).Graded().Connected().Commutative().Cocommutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
     def _repr_(self):
@@ -1529,7 +1648,27 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
 
         def product_on_basis(self, x, y):
             r"""
-            Multiply monomial basis elements by converting through powersums.
+            Multiply two monomial basis elements.
+
+            The product is computed by expanding both factors into the
+            powersum basis, multiplying there (powersum multiplication is
+            concatenation of vector partitions), and coercing the result back
+            into the monomial basis through the cached change of basis.
+
+            EXAMPLES:
+
+            At one alphabet the classical monomial products are recovered, for
+            example `m_{(1)}^2 = m_{(2)} + 2\,m_{(1),(1)}` and
+            `m_{(1),(1)}\,m_{(1)} = m_{(2),(1)} + 3\,m_{(1),(1),(1)}`::
+
+                sage: A = MacMahonSymmetricFunctions(QQ)
+                sage: M = A.M()
+                sage: b = VectorPartition([[1]])
+                sage: M[b] * M[b] == M[[2]] + 2*M[[1], [1]]
+                True
+                sage: c = VectorPartition([[1], [1]])
+                sage: M[c] * M[b] == M[[2], [1]] + 3*M[[1], [1], [1]]
+                True
 
             TESTS::
 
@@ -1540,10 +1679,13 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: M[a] * M[b] == M[b] * M[a]
                 True
             """
-            # No direct quasi-shuffle-like rule is used here; the cached change
-            # of basis handles the product in the native powersum basis.
-            p = self.realization_of().P()
-            return self(p[x] * p[y])
+            # Multiply in the native powersum basis (where the product is
+            # concatenation of vector partitions), then convert back to the
+            # monomial basis.  Each factor must first be expanded into P: the
+            # monomial product is NOT the monomial image of the powersum
+            # P[x cup y], so multiplying P[x] * P[y] directly would be wrong
+            # except in the accidental single-part times single-part case.
+            return self(self._M_to_P(x) * self._M_to_P(y))
 
     M = Monomial
 
@@ -1720,7 +1862,34 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
 
         def product_on_basis(self, x, y):
             r"""
-            Multiply forgotten basis elements through the signed monomial map.
+            Multiply two forgotten basis elements.
+
+            The forgotten basis is the image of the monomial basis under the
+            involution `\omega`,
+
+            .. MATH::
+
+                F_\Lambda = \omega(M_\Lambda).
+
+            Because `\omega` is an algebra homomorphism, the forgotten basis
+            has the *same* structure constants as the monomial basis: if
+            `M_x M_y = \sum_\nu c^{\nu}_{x,y}\, M_\nu`, then applying `\omega`
+            gives `F_x F_y = \sum_\nu c^{\nu}_{x,y}\, F_\nu`.  The product is
+            therefore obtained by multiplying in the monomial basis and reading
+            the resulting coefficients off in the forgotten basis.
+
+            EXAMPLES:
+
+            The forgotten structure constants coincide with the monomial ones::
+
+                sage: A = MacMahonSymmetricFunctions(QQ)
+                sage: F = A.F()
+                sage: b = VectorPartition([[1]])
+                sage: F[b] * F[b] == F[[2]] + 2*F[[1], [1]]
+                True
+                sage: c = VectorPartition([[1], [1]])
+                sage: F[c] * F[b] == F[[2], [1]] + 3*F[[1], [1], [1]]
+                True
 
             TESTS::
 
@@ -1731,9 +1900,12 @@ class MacMahonSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: F[a] * F[b] == F[b] * F[a]
                 True
             """
-            # By convention F is omega(M), so multiplication is obtained by
-            # applying the sign-twisted identification with the monomial basis.
+            # F = omega(M) and omega is an algebra map, so F and M share
+            # structure constants.  Multiply in the monomial basis and
+            # reinterpret the coefficients as forgotten-basis coefficients.
             m = self.realization_of().M()
-            return self((self.sign(x) * m[x]) * (self.sign(y) * m[y]))
+            mprod = m.monomial(x) * m.monomial(y)
+            return self._from_dict(dict(mprod.monomial_coefficients()),
+                                   coerce=True)
 
     F = Forgotten
